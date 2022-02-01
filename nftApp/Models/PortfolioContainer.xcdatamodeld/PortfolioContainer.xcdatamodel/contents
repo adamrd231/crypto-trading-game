@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="PortfolioEntity" representedClassName="PortfolioEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="amount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="TradeEntity" representedClassName="TradeEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="cryptoCoinAmount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="cryptoName" optional="YES" attributeType="String"/>
+        <attribute name="dateOfTrade" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="money" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="priceOfCrypto" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+    </entity>
+    <elements>
+        <element name="PortfolioEntity" positionX="-27" positionY="18" width="128" height="59"/>
+        <element name="TradeEntity" positionX="18" positionY="81" width="128" height="119"/>
+    </elements>
+</model>
