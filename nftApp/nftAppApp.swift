@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import AppTrackingTransparency
 
 @main
 struct nftAppApp: App {
     
     @StateObject private var vm = HomeViewModel()
+    // StoreManager object to make in-app purchases
+    @StateObject var storeManager = StoreManager()
     
     @State private var showLaunchView:Bool = true
     
@@ -19,12 +22,20 @@ struct nftAppApp: App {
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor(Color.theme.accent)]
     }
     
+    // App Tracking Transparency - Request permission and play ads on open only
+    private func requestIDFA() {
+      ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in
+        // Tracking authorization completed. Start loading ads here.
+ 
+      })
+    }
+    
     var body: some Scene {
         WindowGroup {
             
             ZStack {
                 NavigationView {
-                    HomeView()
+                    HomeView(storeManager: storeManager)
                         .navigationBarHidden(true)
                 }
                 .environmentObject(vm)
@@ -38,8 +49,11 @@ struct nftAppApp: App {
                 }
                 .zIndex(2.0)
   
-                
+               
             }
+            .onAppear(perform: {
+                requestIDFA()
+            })
         }
     }
 }

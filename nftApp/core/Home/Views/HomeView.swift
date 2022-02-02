@@ -6,11 +6,56 @@
 //
 
 import SwiftUI
+import GoogleMobileAds
 
 struct HomeView: View {
     
-    
     @EnvironmentObject var vm: HomeViewModel
+    @StateObject var storeManager: StoreManager
+    
+    @State var InterstitialAdCounter = 0 {
+        didSet {
+            if InterstitialAdCounter == 3 {
+                showInterstittialAdvertising()
+                InterstitialAdCounter = 0
+            }
+        }
+    }
+    
+    // Interstitial object for Google Ad Mobs to play video advertising
+    @State var interstitial: GADInterstitialAd?
+    
+    #if targetEnvironment(simulator)
+        // Test Ad
+        var googleBannerInterstitialAdID = "ca-app-pub-3940256099942544/1033173712"
+    #else
+        // Real Ad
+        var googleBannerInterstitialAdID = "ca-app-pub-4186253562269967/5998934622"
+    #endif
+    
+    private func showInterstittialAdvertising() {
+
+        storeManager.showedAdvertising = true
+        let request = GADRequest()
+            GADInterstitialAd.load(
+                withAdUnitID: googleBannerInterstitialAdID,
+                request: request,
+                completionHandler: { [self] ad, error in
+                    // Check if there is an error
+                    if let error = error {
+                        return
+                    }
+                    // If no errors, create an ad and serve it
+                    interstitial = ad
+                    let root = UIApplication.shared.windows.first?.rootViewController
+                    self.interstitial!.present(fromRootViewController: root!)
+
+                    }
+                )
+    }
+    
+    
+
     
     // Control animation on main screen
     @State private var showPortfolio: Bool = false {
@@ -18,6 +63,8 @@ struct HomeView: View {
             if showPortfolio {
                 vm.searchText = ""
             }
+            InterstitialAdCounter += 1
+            print(InterstitialAdCounter)
         }
     }
 
@@ -66,16 +113,18 @@ struct HomeView: View {
 //                    portfolioCoinsList
 //                    .transition(.move(edge: .trailing))
 //                }
-
+                
                 Button(action: {
                     showNewGameScreen.toggle()
                 }) {
-                    Text("Game Menu").font(.caption)
+                    Text("Game Menu")
+                        .font(.caption)
                         .padding(.top, 5)
                         .padding(.horizontal)
-                }
+                }.padding()
+                Spacer(minLength: 5)
+                AdMobBanner()
                 
-                Spacer(minLength: 0)
             }
             .sheet(isPresented: $showSettingsView, content: {
                 SettingsView()
@@ -99,7 +148,7 @@ struct HomeView: View {
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            HomeView()
+            HomeView(storeManager: StoreManager())
                 .navigationBarHidden(true)
                 .environmentObject(dev.homeVM)
         }

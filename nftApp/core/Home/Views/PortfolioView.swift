@@ -85,8 +85,10 @@ struct PortfolioView: View {
                     }
              
                 }
-                
+                Spacer()
+                AdMobBanner()
             }
+            
             .navigationTitle("Buy / Sell Coins")
             .toolbar(content: {
                 ToolbarItem(placement: .navigationBarLeading) {

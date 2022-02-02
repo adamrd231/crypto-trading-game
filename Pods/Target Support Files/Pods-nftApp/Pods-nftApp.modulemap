@@ -1,0 +1,6 @@
+framework module Pods_nftApp {
+  umbrella header "Pods-nftApp-umbrella.h"
+
+  export *
+  module * { export * }
+}

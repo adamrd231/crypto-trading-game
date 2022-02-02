@@ -82,6 +82,7 @@ struct TradeHistoryView: View {
                 
                 
             }
+            AdMobBanner()
         }.padding()
     }
 }
@@ -99,32 +100,32 @@ extension TradeHistoryView {
             if trade.type == "Sale" {
                 VStack(alignment: .leading) {
                     HStack {
-                        Text("Type").bold()
+                        Text("Type")
                         Spacer()
                         Text("\(trade.type)").font(.footnote)
                     }
                     HStack {
-                        Text("Coin").bold()
+                        Text("Coin")
                         Spacer()
                         Text("\(trade.coinName)").font(.subheadline)
                     }
                     HStack {
-                        Text("Date:").bold()
+                        Text("Date:")
                         Spacer()
                         Text("\(trade.dateOfTrade.asLongDateString())").font(.subheadline)
                     }
                     HStack {
-                        Text("Price of Crypto Coin:").bold()
+                        Text("Price of Crypto Coin:")
                         Spacer()
                         Text(" \(trade.priceOfCrypto.asCurrencyWith6Decimals())").font(.subheadline)
                     }
                     HStack {
-                        Text(trade.type == "Purchase" ? "Spent" : "Earned").bold()
+                        Text(trade.type == "Purchase" ? "Spent" : "Earned")
                         Spacer()
                         Text("\(trade.money.asCurrencyWith2Decimals())").font(.subheadline)
                     }
                     HStack {
-                        Text(trade.type == "Purchase" ? "Bought Coins" : "Sold Coins").bold()
+                        Text(trade.type == "Purchase" ? "Bought Coins" : "Sold Coins")
                         Spacer()
                         Text("\(trade.cryptoCoinAmount.asNumberStringWithSixDecimals())").font(.subheadline)
                     }
@@ -138,32 +139,32 @@ extension TradeHistoryView {
         ForEach(vm.allTrades) { trade in
             VStack(alignment: .leading) {
                 HStack {
-                    Text("Type").bold()
+                    Text("Type")
                     Spacer()
                     Text("\(trade.type)").font(.footnote)
                 }
                 HStack {
-                    Text("Coin").bold()
+                    Text("Coin")
                     Spacer()
                     Text("\(trade.coinName)").font(.subheadline)
                 }
                 HStack {
-                    Text("Date:").bold()
+                    Text("Date:")
                     Spacer()
                     Text("\(trade.dateOfTrade.asShortDateString())").font(.subheadline)
                 }
                 HStack {
-                    Text("Price of Crypto Coin:").bold()
+                    Text("Price of Crypto Coin:")
                     Spacer()
                     Text(" \(trade.priceOfCrypto.asCurrencyWith6Decimals())").font(.subheadline)
                 }
                 HStack {
-                    Text(trade.type == "Purchase" ? "Spent" : "Earned").bold()
+                    Text(trade.type == "Purchase" ? "Spent" : "Earned")
                     Spacer()
                     Text("\(trade.money.asCurrencyWith2Decimals())").font(.subheadline)
                 }
                 HStack {
-                    Text(trade.type == "Purchase" ? "Bought Coins" : "Sold Coins").bold()
+                    Text(trade.type == "Purchase" ? "Bought Coins" : "Sold Coins")
                     Spacer()
                     Text("\(trade.cryptoCoinAmount.asNumberStringWithSixDecimals())").font(.subheadline)
                 }
@@ -178,32 +179,32 @@ extension TradeHistoryView {
             if trade.type == "Purchase" {
                 VStack(alignment: .leading) {
                     HStack {
-                        Text("Type").bold()
+                        Text("Type")
                         Spacer()
                         Text("\(trade.type)").font(.footnote)
                     }
                     HStack {
-                        Text("Coin").bold()
+                        Text("Coin")
                         Spacer()
                         Text("\(trade.coinName)").font(.subheadline)
                     }
                     HStack {
-                        Text("Date:").bold()
+                        Text("Date:")
                         Spacer()
                         Text("\(trade.dateOfTrade.asShortDateString())").font(.subheadline)
                     }
                     HStack {
-                        Text("Price of Crypto Coin:").bold()
+                        Text("Price of Crypto Coin:")
                         Spacer()
                         Text(" \(trade.priceOfCrypto.asCurrencyWith6Decimals())").font(.subheadline)
                     }
                     HStack {
-                        Text(trade.type == "Purchase" ? "Spent" : "Earned").bold()
+                        Text(trade.type == "Purchase" ? "Spent" : "Earned")
                         Spacer()
                         Text("\(trade.money.asCurrencyWith2Decimals())").font(.subheadline)
                     }
                     HStack {
-                        Text(trade.type == "Purchase" ? "Bought Coins" : "Sold Coins").bold()
+                        Text(trade.type == "Purchase" ? "Bought Coins" : "Sold Coins")
                         Spacer()
                         Text("\(trade.cryptoCoinAmount.asNumberStringWithSixDecimals())").font(.subheadline)
                     }
