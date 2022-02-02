@@ -35,16 +35,20 @@ class HomeViewModel: ObservableObject {
     let portfolioDataService = PortfolioDataService()
 
     private var cancellables = Set<AnyCancellable>()
+    @State var totalSpentInTrades: Double = 0
     
-   
     enum SortOption {
         case rank, rankReversed, holdings, holdingsReversed, price, priceReversed
     }
     
+   
+//    let portfolioValue =
+//        portfolioCoins
+//            .map({ $0.currentHoldingsValue })
+//            .reduce(0, +)
     
     init() {
         addSubscribers()
-        
     }
     
     func addSubscribers() {
@@ -74,7 +78,6 @@ class HomeViewModel: ObservableObject {
             .combineLatest($portfolioCoins)
             .map(mapGlobalMarketData)
             .sink { [weak self] (returnedStats) in
-                
                 self?.statistics = returnedStats.0
                 self?.secondRowStatistics = returnedStats.1
                 self?.isLoading = false
@@ -87,6 +90,9 @@ class HomeViewModel: ObservableObject {
             .map(mapTradesToArray)
             .sink { returnedTrades in
                 self.allTrades = returnedTrades
+                self.totalSpentInTrades = self.allTrades.map({ $0.money }).reduce(0, +)
+                print("total spent in Trades: \(self.totalSpentInTrades)")
+                
             }
             .store(in: &cancellables)
 
@@ -131,11 +137,9 @@ class HomeViewModel: ObservableObject {
         coinDataService.getCoins()
         marketDataService.getData()
         HapticManager.notification(type: .success)
-        
     }
     
 
-    
     private func mapAllCoinsToPortfolioCoins(allCoins: [CoinModel], portfolioEntities: [PortfolioEntity]) -> [CoinModel] {
         allCoins
             .compactMap { (coin) -> CoinModel? in

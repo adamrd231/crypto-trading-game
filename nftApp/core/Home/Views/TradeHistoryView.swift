@@ -15,6 +15,29 @@ struct TradeHistoryView: View {
     @State var pickerSelection:Int = 0
     var pickerStatus = ["All", "Purchases", "Sales"]
     
+    
+    func getTotalPurchasesSpent() -> Text {
+        var total:Double = 0
+        
+        for trade in vm.allTrades {
+            if trade.type == "Purchase" {
+                total += trade.money
+            }
+        }
+        return Text(total.asCurrencyWith2Decimals())
+    }
+    
+    func getTotalMoneyFromCryptoSales() -> Text {
+        var total:Double = 0
+        
+        for trade in vm.allTrades {
+            if trade.type == "Sale" {
+                total += trade.money
+            }
+        }
+        return Text(total.asCurrencyWith2Decimals())
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -26,15 +49,29 @@ struct TradeHistoryView: View {
                 }
             }
             
-            Text("Trades").font(.title)
+            Text("Trades")
+                .font(.title)
+                .fontWeight(.medium)
+            
+            HStack {
+                Text("Total spent")
+                Spacer()
+                getTotalPurchasesSpent().font(.subheadline)
+            }
+            
+            HStack {
+                Text("Total sold")
+                Spacer()
+                getTotalMoneyFromCryptoSales().font(.subheadline)
+            }
+            
+            Picker("Filter", selection: $pickerSelection) {
+                ForEach(0..<pickerStatus.count) { index in
+                    Text("\(pickerStatus[index])")
+                }
+            }.pickerStyle(SegmentedPickerStyle())
+                
             ScrollView {
-                
-                Picker("Filter", selection: $pickerSelection) {
-                    ForEach(0..<pickerStatus.count) { index in
-                        Text("\(pickerStatus[index])")
-                    }
-                }.pickerStyle(SegmentedPickerStyle())
-                
                 if pickerStatus[pickerSelection] == "Purchases" {
                     allPurchaseTrades
                 } else if pickerStatus[pickerSelection] == "Sales" {
@@ -69,27 +106,27 @@ extension TradeHistoryView {
                     HStack {
                         Text("Coin").bold()
                         Spacer()
-                        Text("\(trade.coinName)")
+                        Text("\(trade.coinName)").font(.subheadline)
                     }
                     HStack {
                         Text("Date:").bold()
                         Spacer()
-                        Text("\(trade.dateOfTrade.asLongDateString())")
+                        Text("\(trade.dateOfTrade.asLongDateString())").font(.subheadline)
                     }
                     HStack {
                         Text("Price of Crypto Coin:").bold()
                         Spacer()
-                        Text(" \(trade.priceOfCrypto.asCurrencyWith6Decimals())")
+                        Text(" \(trade.priceOfCrypto.asCurrencyWith6Decimals())").font(.subheadline)
                     }
                     HStack {
                         Text(trade.type == "Purchase" ? "Spent" : "Earned").bold()
                         Spacer()
-                        Text("\(trade.money.asCurrencyWith2Decimals())")
+                        Text("\(trade.money.asCurrencyWith2Decimals())").font(.subheadline)
                     }
                     HStack {
                         Text(trade.type == "Purchase" ? "Bought Coins" : "Sold Coins").bold()
                         Spacer()
-                        Text("\(trade.cryptoCoinAmount.asNumberStringWithSixDecimals())")
+                        Text("\(trade.cryptoCoinAmount.asNumberStringWithSixDecimals())").font(.subheadline)
                     }
                 }
                 Divider()
@@ -108,27 +145,27 @@ extension TradeHistoryView {
                 HStack {
                     Text("Coin").bold()
                     Spacer()
-                    Text("\(trade.coinName)")
+                    Text("\(trade.coinName)").font(.subheadline)
                 }
                 HStack {
                     Text("Date:").bold()
                     Spacer()
-                    Text("\(trade.dateOfTrade.asShortDateString())")
+                    Text("\(trade.dateOfTrade.asShortDateString())").font(.subheadline)
                 }
                 HStack {
                     Text("Price of Crypto Coin:").bold()
                     Spacer()
-                    Text(" \(trade.priceOfCrypto.asCurrencyWith6Decimals())")
+                    Text(" \(trade.priceOfCrypto.asCurrencyWith6Decimals())").font(.subheadline)
                 }
                 HStack {
                     Text(trade.type == "Purchase" ? "Spent" : "Earned").bold()
                     Spacer()
-                    Text("\(trade.money.asCurrencyWith2Decimals())")
+                    Text("\(trade.money.asCurrencyWith2Decimals())").font(.subheadline)
                 }
                 HStack {
                     Text(trade.type == "Purchase" ? "Bought Coins" : "Sold Coins").bold()
                     Spacer()
-                    Text("\(trade.cryptoCoinAmount.asNumberStringWithSixDecimals())")
+                    Text("\(trade.cryptoCoinAmount.asNumberStringWithSixDecimals())").font(.subheadline)
                 }
             }
             Divider()
@@ -148,27 +185,27 @@ extension TradeHistoryView {
                     HStack {
                         Text("Coin").bold()
                         Spacer()
-                        Text("\(trade.coinName)")
+                        Text("\(trade.coinName)").font(.subheadline)
                     }
                     HStack {
                         Text("Date:").bold()
                         Spacer()
-                        Text("\(trade.dateOfTrade.asShortDateString())")
+                        Text("\(trade.dateOfTrade.asShortDateString())").font(.subheadline)
                     }
                     HStack {
                         Text("Price of Crypto Coin:").bold()
                         Spacer()
-                        Text(" \(trade.priceOfCrypto.asCurrencyWith6Decimals())")
+                        Text(" \(trade.priceOfCrypto.asCurrencyWith6Decimals())").font(.subheadline)
                     }
                     HStack {
                         Text(trade.type == "Purchase" ? "Spent" : "Earned").bold()
                         Spacer()
-                        Text("\(trade.money.asCurrencyWith2Decimals())")
+                        Text("\(trade.money.asCurrencyWith2Decimals())").font(.subheadline)
                     }
                     HStack {
                         Text(trade.type == "Purchase" ? "Bought Coins" : "Sold Coins").bold()
                         Spacer()
-                        Text("\(trade.cryptoCoinAmount.asNumberStringWithSixDecimals())")
+                        Text("\(trade.cryptoCoinAmount.asNumberStringWithSixDecimals())").font(.subheadline)
                     }
                 }
                 Divider()

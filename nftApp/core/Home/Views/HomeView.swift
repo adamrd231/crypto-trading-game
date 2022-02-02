@@ -13,10 +13,16 @@ struct HomeView: View {
     @EnvironmentObject var vm: HomeViewModel
     
     // Control animation on main screen
-    @State private var showPortfolio: Bool = true // animate right
+    @State private var showPortfolio: Bool = false {
+        didSet {
+            if showPortfolio {
+                vm.searchText = ""
+            }
+        }
+    }
 
     // Sheet Navigation
-    @State private var showPortfolioView: Bool = false // new sheet
+    @State private var showPortfolioView: Bool = false // new sheet {}
     
     @State private var showSettingsView: Bool = false
     
@@ -51,12 +57,15 @@ struct HomeView: View {
                 if !showPortfolio {
                     allCoinsList
                     .transition(.move(edge: .leading))
-                }
-                
-                if showPortfolio {
+                } else if showPortfolio {
                     portfolioCoinsList
                     .transition(.move(edge: .trailing))
                 }
+                
+//                if showPortfolio {
+//                    portfolioCoinsList
+//                    .transition(.move(edge: .trailing))
+//                }
 
                 Button(action: {
                     showNewGameScreen.toggle()
@@ -124,6 +133,7 @@ extension HomeView {
                 .onTapGesture {
                     withAnimation(.spring()) {
                         showPortfolio.toggle()
+                        print("ShowPortfolio: \(showPortfolio)")
                     }
                 }
         }

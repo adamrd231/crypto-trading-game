@@ -185,6 +185,9 @@ extension PortfolioView {
                     
                     // Show Alert for successful coin purchase
                     currentAlert = .purchaseSuccessful
+                    buyAmount = ""
+                    sellAmount = ""
+                    
                     showingPaymentAlert.toggle()
                 }
                 
@@ -214,6 +217,8 @@ extension PortfolioView {
                 
                 // Show Alert that user sold crypto
                 currentAlert = .saleSuccessful
+                buyAmount = ""
+                sellAmount = ""
                 showingPaymentAlert.toggle()
             }
         }
@@ -456,7 +461,7 @@ extension PortfolioView {
             Button(action: {
                 showTradeHistoryView.toggle()
             }) {
-                Text("Trade History")
+                Text("Trades")
             }
             
         }
