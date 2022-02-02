@@ -57,6 +57,8 @@ struct NewGameScreen: View {
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Return to Game")
+                            .padding()
+                            .font(.callout)
                     }
                 }
             }.padding()

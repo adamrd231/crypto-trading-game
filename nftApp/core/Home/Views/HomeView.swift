@@ -62,8 +62,10 @@ struct HomeView: View {
                     showNewGameScreen.toggle()
                 }) {
                     Text("Game Menu").font(.caption)
+                        .padding(.top, 5)
+                        .padding(.horizontal)
                 }
-                .padding(.top, 3)
+                
                 Spacer(minLength: 0)
             }
             .sheet(isPresented: $showSettingsView, content: {
@@ -80,16 +82,7 @@ struct HomeView: View {
                     destination: DetailLoadingView(coin: $selectedCoin),
                         isActive: $showDetailView,
                         label: { EmptyView()})
-                
-//                NavigationLink(
-//                    destination: PortfolioView(showPortfolio: $showPortfolio, coinID: selectedCoin?.id ?? "")
-//                        .environmentObject(vm),
-//                    isActive: $showPortfolioView,
-//                    label: { EmptyView() })
             }
-                
-            
-            
         )
     }
 }
@@ -157,16 +150,13 @@ extension HomeView {
     
     private var portfolioCoinsList: some View {
         List {
-            VStack {
-                ForEach(vm.portfolioCoins) { coin in
-                    CoinRowView(coin: coin, showHoldingsColumn: true)
-                        .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 0))
-                        .onTapGesture {
-                            selectedCoin = coin
-                            showPortfolioView.toggle()
-                    }
+            ForEach(vm.portfolioCoins) { coin in
+                CoinRowView(coin: coin, showHoldingsColumn: true)
+                    .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 0))
+                    .onTapGesture {
+                        selectedCoin = coin
+                        showPortfolioView.toggle()
                 }
-            
             }
         }
         .listStyle(PlainListStyle())

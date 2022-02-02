@@ -23,7 +23,7 @@ struct GameTrade: Identifiable, Codable {
 class GameModel: Identifiable, ObservableObject {
     let id = UUID().uuidString
     @Published(key: "game") var gameDollars: Double = 100000
-    @Published(wrappedValue: Date(), key: "date") var startingDate: Date
+    @Published(wrappedValue: Date(), key: "date") var startingDate: Date 
     
 }
 
