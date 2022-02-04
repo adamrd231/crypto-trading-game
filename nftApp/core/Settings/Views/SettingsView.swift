@@ -30,23 +30,23 @@ struct SettingsView: View {
     }
     
     var body: some View {
-        NavigationView {
-            List {
-                settingsSection
-                coinGeckoSection
-                developerSection
-                privacyPolicy
-            }
-            .font(.headline)
-            .accentColor(.blue)
-            .listStyle(GroupedListStyle())
-            .navigationTitle("Settings")
-            .toolbar(content: {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    XmarkButton()
-                }
-            })
+
+        List {
+            settingsSection
+            coinGeckoSection
+            developerSection
+            privacyPolicy
         }
+        .font(.headline)
+        .accentColor(.blue)
+        .listStyle(GroupedListStyle())
+        .navigationTitle("Settings")
+        .toolbar(content: {
+            ToolbarItem(placement: .navigationBarLeading) {
+                XmarkButton()
+            }
+        })
+        .navigationBarHidden(true)
     }
 }
 

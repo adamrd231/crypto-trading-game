@@ -10,6 +10,7 @@
 		661B3B6127A724B000B9FFA2 /* PortfolioContainer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6691DE1127A3388200B099D2 /* PortfolioContainer.xcdatamodeld */; };
 		6659565927AB3AE200421A26 /* AdMobBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6659565827AB3AE200421A26 /* AdMobBannerView.swift */; };
 		6659565C27AB3DF400421A26 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6659565B27AB3DF400421A26 /* StoreManager.swift */; };
+		6659565E27AB43F800421A26 /* InAppPurchasesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6659565D27AB43F800421A26 /* InAppPurchasesView.swift */; };
 		666B3B8427A76F63007E4C96 /* TradeHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666B3B8327A76F63007E4C96 /* TradeHistoryView.swift */; };
 		666B3B8627A8C814007E4C96 /* Published.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666B3B8527A8C814007E4C96 /* Published.swift */; };
 		666B3B8827A92C2E007E4C96 /* NewGameScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666B3B8727A92C2E007E4C96 /* NewGameScreen.swift */; };
@@ -63,6 +64,7 @@
 		2FE9D3E9115FBEAAA71792F0 /* Pods_nftApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nftApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6659565827AB3AE200421A26 /* AdMobBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdMobBannerView.swift; sourceTree = "<group>"; };
 		6659565B27AB3DF400421A26 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
+		6659565D27AB43F800421A26 /* InAppPurchasesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppPurchasesView.swift; sourceTree = "<group>"; };
 		666B3B8327A76F63007E4C96 /* TradeHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeHistoryView.swift; sourceTree = "<group>"; };
 		666B3B8527A8C814007E4C96 /* Published.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Published.swift; sourceTree = "<group>"; };
 		666B3B8727A92C2E007E4C96 /* NewGameScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGameScreen.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				6659565B27AB3DF400421A26 /* StoreManager.swift */,
+				6659565D27AB43F800421A26 /* InAppPurchasesView.swift */,
 			);
 			path = InAppPurchases;
 			sourceTree = "<group>";
@@ -517,6 +520,7 @@
 				66CCF59227923F2800F8B2E8 /* CoinImageView.swift in Sources */,
 				669AB7D4278A9E6300873C4B /* nftAppApp.swift in Sources */,
 				66CCF59E27950B6E00F8B2E8 /* StatisticsModel.swift in Sources */,
+				6659565E27AB43F800421A26 /* InAppPurchasesView.swift in Sources */,
 				6659565927AB3AE200421A26 /* AdMobBannerView.swift in Sources */,
 				66CCF59C2794C93300F8B2E8 /* UIApplication.swift in Sources */,
 				66CCF5A027950C9C00F8B2E8 /* StatisticsView.swift in Sources */,

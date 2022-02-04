@@ -11,11 +11,27 @@ import GoogleMobileAds
 struct HomeView: View {
     
     @EnvironmentObject var vm: HomeViewModel
+    @State private var selectedCoin: CoinModel? = nil
     @StateObject var storeManager: StoreManager
+
+    // Control animation on main screen
+    @State private var showPortfolio: Bool = false {
+        didSet {
+            if showPortfolio {
+                vm.searchText = ""
+            }
+            InterstitialAdCounter += 1
+            print(InterstitialAdCounter)
+        }
+    }
+
+    // Sheet Navigation
+    @State private var showDetailView: Bool = false
+    @State var showPortfolioView: Bool = false
     
     @State var InterstitialAdCounter = 0 {
         didSet {
-            if InterstitialAdCounter == 3 {
+            if InterstitialAdCounter >= 3 {
                 showInterstittialAdvertising()
                 InterstitialAdCounter = 0
             }
@@ -30,12 +46,11 @@ struct HomeView: View {
         var googleBannerInterstitialAdID = "ca-app-pub-3940256099942544/1033173712"
     #else
         // Real Ad
-        var googleBannerInterstitialAdID = "ca-app-pub-4186253562269967/5998934622"
+        var googleBannerInterstitialAdID = "ca-app-pub-4186253562269967/5364863972"
     #endif
     
     private func showInterstittialAdvertising() {
-
-        storeManager.showedAdvertising = true
+  
         let request = GADRequest()
             GADInterstitialAd.load(
                 withAdUnitID: googleBannerInterstitialAdID,
@@ -54,97 +69,48 @@ struct HomeView: View {
                 )
     }
     
-    
-
-    
-    // Control animation on main screen
-    @State private var showPortfolio: Bool = false {
-        didSet {
-            if showPortfolio {
-                vm.searchText = ""
-            }
-            InterstitialAdCounter += 1
-            print(InterstitialAdCounter)
-        }
-    }
-
-    // Sheet Navigation
-    @State private var showPortfolioView: Bool = false // new sheet {}
-    
-    @State private var showSettingsView: Bool = false
-    
-    @State private var selectedCoin: CoinModel? = nil
-    @State private var showDetailView: Bool = false
-    
-    @State var showNewGameScreen:Bool = false
-    
+    // MARK: Main Body
+    // -------------------
     var body: some View {
-        ZStack {
-            Color.theme.background
-                .ignoresSafeArea()
+        TabView {
+            // First Screen
+            homeView
                 .sheet(isPresented: $showPortfolioView, content: {
-                    
-                    PortfolioView(showPortfolio: $showPortfolio).environmentObject(vm)
-                    
+                    PortfolioView(showPortfolio: $showPortfolioView)
                 })
+                .tabItem { VStack {
+                    Image(systemName: "bitcoinsign.circle")
+                    Text("Market")
+                }}
             
-            VStack {
-                homeHeader
-                HomeStatsView(showPortfolio: $showPortfolio)
-                if !showPortfolio {
-                    SearchBarView(searchText: $vm.searchText)
-                }
-                
-                columnTitles
-                    
-                .font(.caption)
-                .foregroundColor(Color.theme.secondaryText)
-                .padding(.horizontal)
-                
-                if !showPortfolio {
-                    allCoinsList
-                    .transition(.move(edge: .leading))
-                } else if showPortfolio {
-                    portfolioCoinsList
-                    .transition(.move(edge: .trailing))
-                }
-                
-//                if showPortfolio {
-//                    portfolioCoinsList
-//                    .transition(.move(edge: .trailing))
-//                }
-                
-                Button(action: {
-                    showNewGameScreen.toggle()
-                }) {
-                    Text("Game Menu")
-                        .font(.caption)
-                        .padding(.top, 5)
-                        .padding(.horizontal)
-                }.padding()
-                Spacer(minLength: 5)
-                AdMobBanner()
-                
-            }
-            .sheet(isPresented: $showSettingsView, content: {
-                SettingsView()
-            })
-        }
-        .sheet(isPresented: $showNewGameScreen, content: {
+            // Information on the game
+            SettingsView()
+                .tabItem { VStack {
+                    Image(systemName: "info.circle")
+                    Text("About")
+                }}
+            
+            // Game Options Screen
             NewGameScreen()
-        })
+                .tabItem { VStack {
+                    Image(systemName: "gamecontroller")
+                    Text("Options")
+                }}
+            
+            // In App Purchases Screen
+            InAppStorePurchasesView(storeManager: storeManager)
+                .tabItem { VStack {
+                    Image(systemName: "creditcard")
+                    Text("Remove Ads")
+                }}
+        }
+        }
         
-        .background(
-            VStack {
-                NavigationLink(
-                    destination: DetailLoadingView(coin: $selectedCoin),
-                        isActive: $showDetailView,
-                        label: { EmptyView()})
-            }
-        )
-    }
 }
 
+
+// MARK: Previews
+// -------------------
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
@@ -155,28 +121,73 @@ struct HomeView_Previews: PreviewProvider {
     }
 }
 
+
+// MARK: Extension to HomeView
+// ----------------------------
 extension HomeView {
+    private var homeView: some View {
+        ZStack {
+            Color.theme.background
+                .ignoresSafeArea()
+            
+            VStack {
+                homeHeader
+                HomeStatsView(showPortfolio: $showPortfolio)
+                if !showPortfolio {
+                    SearchBarView(searchText: $vm.searchText)
+                }
+                
+                columnTitles
+                    
+                if !showPortfolio {
+                    allCoinsList
+                    .transition(.move(edge: .leading))
+                } else if showPortfolio {
+                    portfolioCoinsList
+                    .transition(.move(edge: .trailing))
+                }
+                   
+                Spacer(minLength: 5)
+                AdMobBanner()
+            }
+
+            .background(
+                VStack {
+                    NavigationLink(
+                        destination: DetailLoadingView(coin: $selectedCoin),
+                            isActive: $showDetailView,
+                            label: { EmptyView()})
+                }
+            )
+            .navigationBarHidden(true)
+        }
+    }
+    
+  
     private var homeHeader: some View {
         HStack {
-            CircleButtonView(iconName: showPortfolio ? "plus" : "info")
+            
+            // Left Circle button - manages bringing up portfolio to buy coins and information about the app
+            CircleButtonView(iconName: "plus")
                 .animation(.none)
                 .onTapGesture {
-                    if showPortfolio {
-                        showPortfolioView.toggle()
-                    } else {
-                        showSettingsView.toggle()
-                    }
+                    showPortfolioView.toggle()
+                
                 }
                 .background(
                     CircleButtonAnimationView(animate: $showPortfolio)
                 )
             Spacer()
+            
+            //  Center Description Text
             Text(showPortfolio ? "Portfolio" : "Live Prices")
                 .font(.headline)
                 .fontWeight(.heavy)
                 .foregroundColor(Color.theme.accent)
                 .animation(.none)
             Spacer()
+            
+            // Right Circle Button - handles moving left to right from all coins to portfolio coins
             CircleButtonView(iconName: "chevron.right")
                 .rotationEffect(Angle(degrees: showPortfolio ? 180 : 0))
                 .onTapGesture {
@@ -215,6 +226,7 @@ extension HomeView {
                     .onTapGesture {
                         selectedCoin = coin
                         showPortfolioView.toggle()
+                       
                 }
             }
         }
@@ -275,7 +287,13 @@ extension HomeView {
             })
             .rotationEffect(Angle(degrees: vm.isLoading ? 360 : 0), anchor: .center)
         }
+        .font(.caption)
+        .foregroundColor(Color.theme.secondaryText)
+        .padding(.horizontal)
     }
+    
+    
     
 
 }
+

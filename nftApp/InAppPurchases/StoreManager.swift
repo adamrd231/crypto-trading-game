@@ -13,7 +13,6 @@ class StoreManager: NSObject, ObservableObject, SKProductsRequestDelegate, SKPay
     @Published var myProducts = [SKProduct]()
     var request: SKProductsRequest!
     @Published var transactionState: SKPaymentTransactionState?
-    @Published var showedAdvertising = false
     @Published var purchasedRemoveAds = UserDefaults.standard.bool(forKey: "purchasedRemoveAds") {
         didSet {
             UserDefaults.standard.setValue(self.purchasedRemoveAds, forKey: "purchasedRemoveAds")
