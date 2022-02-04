@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AppTrackingTransparency
+import StoreKit
 
 @main
 struct nftAppApp: App {
@@ -14,6 +15,15 @@ struct nftAppApp: App {
     @StateObject private var vm = HomeViewModel()
     // StoreManager object to make in-app purchases
     @StateObject var storeManager = StoreManager()
+    
+    var productIDs = ["cryptoRemoveAds"]
+    
+    private func setupStoreManager() {
+        if storeManager.myProducts.isEmpty {
+            SKPaymentQueue.default().add(storeManager)
+            storeManager.getProducts(productIDs: productIDs)
+        }
+    }
     
     @State private var showLaunchView:Bool = true
     
@@ -36,9 +46,10 @@ struct nftAppApp: App {
             ZStack {
                 NavigationView {
                     HomeView(storeManager: storeManager)
+                        .environmentObject(vm)
                         .navigationBarHidden(true)
-                }
-                .environmentObject(vm)
+                }.navigationViewStyle(StackNavigationViewStyle())
+                
                 
                 ZStack {
                     if showLaunchView {
@@ -53,6 +64,7 @@ struct nftAppApp: App {
             }
             .onAppear(perform: {
                 requestIDFA()
+                setupStoreManager()
             })
         }
     }

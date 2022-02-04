@@ -32,12 +32,23 @@ struct SettingsView: View {
     var body: some View {
 
         List {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("Crypto Lemondade Stand Game")
+                    .font(.title3)
+                    .fontWeight(.light)
+                    .multilineTextAlignment(.center)
+                Text("Designed & Developed By")
+                    .font(.caption)
+                    .fontWeight(.light)
+                Text("Adam Reed")
+                    .font(.caption)
+      
+            }.padding()
             settingsSection
             coinGeckoSection
             developerSection
             privacyPolicy
         }
-        .font(.headline)
         .accentColor(.blue)
         .listStyle(GroupedListStyle())
         .navigationTitle("Settings")
@@ -75,15 +86,18 @@ extension SettingsView {
                     .frame(width: 100, height: 100)
      
                     .clipShape(RoundedRectangle(cornerRadius: 50.0))
-                
-                Text("Adam Reed, Developer")
+                VStack(alignment: .leading) {
+                    Text("Adam Reed").fontWeight(.bold)
+                    Text("Developer")
+                }
             }
             
                 
             VStack(alignment: .leading, spacing: 10) {
                 
                 Text("This App was made with inspiration from @SwiftfulThinking course on Youtube and utilizing CoinGecko's API for cryptocurrency pricing and information. It uses MVVM architecture, Combine and CoreData. The app was expanded upon by making it into a free to use crptyo trading game.")
-                    .lineLimit(showfullDescription ? nil : 5)
+                    
+                    .lineLimit(showfullDescription ? nil : 3)
                 Button( action: {
                     showfullDescription.toggle()
                     
@@ -141,8 +155,8 @@ extension SettingsView {
             VStack(alignment: .leading, spacing: 10) {
                 
                 Text("This app was developed by Adam Reed. It uses SwiftUI and is written completely in swift. This project was intended to dive into and get more familiar with multi-threading, publishers and subscribers, as well as data persistence.")
-                    .font(.callout)
-                    .fontWeight(.medium)
+                    
+
 
             }
             

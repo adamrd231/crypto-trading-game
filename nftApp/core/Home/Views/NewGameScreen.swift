@@ -23,18 +23,7 @@ struct NewGameScreen: View {
             VStack {
                 Spacer()
                 VStack(spacing: 5) {
-                    Text("Crypto Lemondade Stand Game")
-                        
-                        .font(.title3)
-                        .fontWeight(.light)
-                        .multilineTextAlignment(.center)
-                    Text("Designed & Developed By")
-                        .font(.caption)
-                        .fontWeight(.light)
-                    Text("Adam Reed")
-                        .font(.callout)
-                        .fontWeight(.medium)
-                        .padding(.bottom)
+                    
                     Button(action: {
                         timer.connect()
                         vm.game.gameDollars = 100000

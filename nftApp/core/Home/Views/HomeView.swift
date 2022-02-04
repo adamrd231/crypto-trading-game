@@ -5,14 +5,18 @@
 //  Created by Adam Reed on 1/11/22.
 //
 
+
+
 import SwiftUI
 import GoogleMobileAds
+
 
 struct HomeView: View {
     
     @EnvironmentObject var vm: HomeViewModel
     @State private var selectedCoin: CoinModel? = nil
     @StateObject var storeManager: StoreManager
+    
 
     // Control animation on main screen
     @State private var showPortfolio: Bool = false {
@@ -20,8 +24,11 @@ struct HomeView: View {
             if showPortfolio {
                 vm.searchText = ""
             }
-            InterstitialAdCounter += 1
-            print(InterstitialAdCounter)
+            if storeManager.purchasedRemoveAds != true {
+                InterstitialAdCounter += 1
+                print(InterstitialAdCounter)
+            }
+            
         }
     }
 
@@ -31,16 +38,18 @@ struct HomeView: View {
     
     @State var InterstitialAdCounter = 0 {
         didSet {
-            if InterstitialAdCounter >= 3 {
-                showInterstittialAdvertising()
-                InterstitialAdCounter = 0
+            if InterstitialAdCounter >= 5 {
+                if storeManager.purchasedRemoveAds != true {
+                    loadInterstitialAd()
+                    InterstitialAdCounter = 0
+
+                }
             }
         }
     }
     
-    // Interstitial object for Google Ad Mobs to play video advertising
     @State var interstitial: GADInterstitialAd?
-    
+
     #if targetEnvironment(simulator)
         // Test Ad
         var googleBannerInterstitialAdID = "ca-app-pub-3940256099942544/1033173712"
@@ -49,8 +58,10 @@ struct HomeView: View {
         var googleBannerInterstitialAdID = "ca-app-pub-4186253562269967/5364863972"
     #endif
     
-    private func showInterstittialAdvertising() {
-  
+    // App Tracking Transparency - Request permission and play ads on open only
+    private func loadInterstitialAd() {
+
+        // Tracking authorization completed. Start loading ads here.
         let request = GADRequest()
             GADInterstitialAd.load(
                 withAdUnitID: googleBannerInterstitialAdID,
@@ -62,12 +73,16 @@ struct HomeView: View {
                     }
                     // If no errors, create an ad and serve it
                     interstitial = ad
+
                     let root = UIApplication.shared.windows.first?.rootViewController
-                    self.interstitial!.present(fromRootViewController: root!)
+
+                    self.interstitial?.present(fromRootViewController: root!)
+
+                    
 
                     }
                 )
-    }
+      }
     
     // MARK: Main Body
     // -------------------
@@ -76,7 +91,7 @@ struct HomeView: View {
             // First Screen
             homeView
                 .sheet(isPresented: $showPortfolioView, content: {
-                    PortfolioView(showPortfolio: $showPortfolioView)
+                    PortfolioView(storeManager: storeManager, showPortfolio: $showPortfolioView)
                 })
                 .tabItem { VStack {
                     Image(systemName: "bitcoinsign.circle")
@@ -104,7 +119,7 @@ struct HomeView: View {
                     Text("Remove Ads")
                 }}
         }
-        }
+    }
         
 }
 
@@ -148,7 +163,10 @@ extension HomeView {
                 }
                    
                 Spacer(minLength: 5)
-                AdMobBanner()
+                if storeManager.purchasedRemoveAds != true {
+                    AdMobBanner()
+                }
+               
             }
 
             .background(

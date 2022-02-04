@@ -10,6 +10,7 @@ import SwiftUI
 struct TradeHistoryView: View {
     
     @EnvironmentObject var vm: HomeViewModel
+    @StateObject var storeManager: StoreManager
     @Environment(\.presentationMode) var presentationMode
     
     @State var pickerSelection:Int = 0
@@ -82,14 +83,17 @@ struct TradeHistoryView: View {
                 
                 
             }
-            AdMobBanner()
+            if storeManager.purchasedRemoveAds != true {
+                AdMobBanner()
+            }
+            
         }.padding()
     }
 }
 
 struct TradeHistoryView_Previews: PreviewProvider {
     static var previews: some View {
-        TradeHistoryView()
+        TradeHistoryView(storeManager: StoreManager())
     }
 }
 

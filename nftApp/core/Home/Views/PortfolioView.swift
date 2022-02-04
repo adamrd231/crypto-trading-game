@@ -10,6 +10,7 @@ import SwiftUI
 struct PortfolioView: View {
     
     @EnvironmentObject var vm: HomeViewModel
+    @StateObject var storeManager: StoreManager
     @State private var selectedCoin: CoinModel?
     @State private var quantityText: String = ""
     @State private var showCheckMark: Bool = false
@@ -86,7 +87,9 @@ struct PortfolioView: View {
              
                 }
                 Spacer()
-                AdMobBanner()
+                if storeManager.purchasedRemoveAds != true {
+                    AdMobBanner()
+                }
             }
             
             .navigationTitle("Buy / Sell Coins")
@@ -106,7 +109,7 @@ struct PortfolioView: View {
                 }
             })
             .sheet(isPresented: $showTradeHistoryView, content: {
-                TradeHistoryView().environmentObject(vm)
+                TradeHistoryView(storeManager: storeManager).environmentObject(vm)
             })
             .alert(isPresented: $showingPaymentAlert, content: {
                 // decide which alert to show
@@ -132,7 +135,7 @@ struct PortfolioView: View {
 // ---------------------------
 struct PortfolioView_Previews: PreviewProvider {
     static var previews: some View {
-        PortfolioView(showPortfolio: .constant(true)).environmentObject(dev.homeVM)
+        PortfolioView(storeManager: StoreManager(), showPortfolio: .constant(true)).environmentObject(dev.homeVM)
     }
 }
 
