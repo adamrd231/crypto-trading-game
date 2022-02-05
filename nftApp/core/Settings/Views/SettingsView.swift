@@ -33,7 +33,7 @@ struct SettingsView: View {
 
         List {
             VStack(alignment: .leading, spacing: 5) {
-                Text("Crypto Lemondade Stand Game")
+                Text("Crypto-nade Stand Game")
                     .font(.title3)
                     .fontWeight(.light)
                     .multilineTextAlignment(.center)
@@ -51,13 +51,12 @@ struct SettingsView: View {
         }
         .accentColor(.blue)
         .listStyle(GroupedListStyle())
-        .navigationTitle("Settings")
         .toolbar(content: {
             ToolbarItem(placement: .navigationBarLeading) {
                 XmarkButton()
             }
         })
-        .navigationBarHidden(true)
+       
     }
 }
 

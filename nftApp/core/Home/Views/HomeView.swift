@@ -33,8 +33,17 @@ struct HomeView: View {
     }
 
     // Sheet Navigation
-    @State private var showDetailView: Bool = false
-    @State var showPortfolioView: Bool = false
+    @State private var showDetailView: Bool = false {
+        didSet {
+            if storeManager.purchasedRemoveAds != true {
+                InterstitialAdCounter += 1
+                print(InterstitialAdCounter)
+            }
+            
+        }
+    }
+    
+    @State var showPortfolioView: Bool = false 
     
     @State var InterstitialAdCounter = 0 {
         didSet {
@@ -67,29 +76,27 @@ struct HomeView: View {
                 withAdUnitID: googleBannerInterstitialAdID,
                 request: request,
                 completionHandler: { [self] ad, error in
+                    
                     // Check if there is an error
                     if let error = error {
                         return
                     }
-                    // If no errors, create an ad and serve it
                     interstitial = ad
-
                     let root = UIApplication.shared.windows.first?.rootViewController
-
                     self.interstitial?.present(fromRootViewController: root!)
 
-                    
-
-                    }
-                )
+                })
       }
     
     // MARK: Main Body
     // -------------------
     var body: some View {
+       
         TabView {
             // First Screen
             homeView
+                .navigationTitle("")
+                .navigationBarHidden(true)
                 .sheet(isPresented: $showPortfolioView, content: {
                     PortfolioView(storeManager: storeManager, showPortfolio: $showPortfolioView)
                 })
@@ -100,6 +107,8 @@ struct HomeView: View {
             
             // Information on the game
             SettingsView()
+                .navigationTitle("")
+                .navigationBarHidden(true)
                 .tabItem { VStack {
                     Image(systemName: "info.circle")
                     Text("About")
@@ -107,6 +116,8 @@ struct HomeView: View {
             
             // Game Options Screen
             NewGameScreen()
+                .navigationTitle("")
+                .navigationBarHidden(true)
                 .tabItem { VStack {
                     Image(systemName: "gamecontroller")
                     Text("Options")
@@ -114,13 +125,15 @@ struct HomeView: View {
             
             // In App Purchases Screen
             InAppStorePurchasesView(storeManager: storeManager)
+                .navigationTitle("")
+                .navigationBarHidden(true)
                 .tabItem { VStack {
                     Image(systemName: "creditcard")
                     Text("Remove Ads")
                 }}
         }
+       
     }
-        
 }
 
 
@@ -162,7 +175,7 @@ extension HomeView {
                     .transition(.move(edge: .trailing))
                 }
                    
-                Spacer(minLength: 5)
+              
                 if storeManager.purchasedRemoveAds != true {
                     AdMobBanner()
                 }
@@ -177,7 +190,6 @@ extension HomeView {
                             label: { EmptyView()})
                 }
             )
-            .navigationBarHidden(true)
         }
     }
     

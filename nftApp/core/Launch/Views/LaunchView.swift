@@ -21,7 +21,7 @@ struct LaunchView: View {
         ZStack {
             Color.launch.background
                 .ignoresSafeArea()
-            Image("logo")
+            Image("sim-crypto-game-icon")
                 .resizable()
                 .frame(width: 100, height: 100)
             ZStack {
@@ -31,7 +31,7 @@ struct LaunchView: View {
                             Text(loadingText[index])
                                 .font(.headline)
                                 .foregroundColor(.white)
-                                .fontWeight(.heavy)
+                                .fontWeight(.light)
                                 .offset(y: counter == index ? -5 : 0)
                                 
                         }
@@ -60,6 +60,7 @@ struct LaunchView: View {
                 }
             }
         })
+        .navigationBarHidden(true)
     }
 }
 

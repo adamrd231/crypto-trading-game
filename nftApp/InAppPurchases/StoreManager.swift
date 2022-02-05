@@ -13,12 +13,18 @@ class StoreManager: NSObject, ObservableObject, SKProductsRequestDelegate, SKPay
     @Published var myProducts = [SKProduct]()
     var request: SKProductsRequest!
     @Published var transactionState: SKPaymentTransactionState?
-    @Published var purchasedRemoveAds = UserDefaults.standard.bool(forKey: "purchasedRemoveAds") {
-        didSet {
-            UserDefaults.standard.setValue(self.purchasedRemoveAds, forKey: "purchasedRemoveAds")
+    
+    #if targetEnvironment(simulator)
+        // Test dev environment, run as if ads were purchased
+        @Published var purchasedRemoveAds = true
+    #else
+        // If not simulator, run ads as normal
+        @Published var purchasedRemoveAds = UserDefaults.standard.bool(forKey: "purchasedRemoveAds") {
+            didSet {
+                UserDefaults.standard.setValue(self.purchasedRemoveAds, forKey: "purchasedRemoveAds")
+            }
         }
-    }
-//    @Published var purchasedRemoveAds = true
+    #endif
     
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         print("Did receive response")

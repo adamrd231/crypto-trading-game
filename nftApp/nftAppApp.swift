@@ -47,7 +47,7 @@ struct nftAppApp: App {
                 NavigationView {
                     HomeView(storeManager: storeManager)
                         .environmentObject(vm)
-                        .navigationBarHidden(true)
+
                 }.navigationViewStyle(StackNavigationViewStyle())
                 
                 
@@ -59,8 +59,7 @@ struct nftAppApp: App {
                     }
                 }
                 .zIndex(2.0)
-  
-               
+
             }
             .onAppear(perform: {
                 requestIDFA()

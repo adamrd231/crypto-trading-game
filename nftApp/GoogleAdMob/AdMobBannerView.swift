@@ -43,7 +43,7 @@ final private class BannerVC: UIViewControllerRepresentable  {
 
 struct AdMobBanner: View {
     var body: some View {
-        HStack(alignment: .center) {
+        HStack {
             BannerVC().frame(width: 320, height: 55, alignment: .center)
         }
     }
@@ -51,6 +51,6 @@ struct AdMobBanner: View {
 
 struct AdMobBanner_Previews: PreviewProvider {
     static var previews: some View {
-        AdMobBanner()
+        AdMobBanner().previewLayout(.sizeThatFits)
     }
 }

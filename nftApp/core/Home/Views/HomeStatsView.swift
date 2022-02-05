@@ -27,7 +27,7 @@ struct HomeStatsView: View {
                         .frame(width: UIScreen.main.bounds.width / 3)
                 }
             }
-            .padding(.top, 5)
+            .padding(.top, 1)
         }
         .frame(width: UIScreen.main.bounds.width,
                alignment: showPortfolio ? .trailing : .leading)
