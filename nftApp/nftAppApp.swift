@@ -62,7 +62,10 @@ struct nftAppApp: App {
 
             }
             .onAppear(perform: {
-                requestIDFA()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    requestIDFA()
+                }
+                
                 setupStoreManager()
             })
         }
