@@ -10,7 +10,7 @@ import Foundation
 struct StatisticsModel: Identifiable {
     let id = UUID().uuidString
     let title: String
-    let value: String
+    var value: String
     let percentageChanged: Double?
     
     init(title: String, value: String, percentageChanged: Double? = nil) {

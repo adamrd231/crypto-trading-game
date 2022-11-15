@@ -10,83 +10,32 @@
 import SwiftUI
 import GoogleMobileAds
 
-
 struct HomeView: View {
     
     @EnvironmentObject var vm: HomeViewModel
     @State private var selectedCoin: CoinModel? = nil
-    @StateObject var storeManager: StoreManager
     
-
-    // Control animation on main screen
-    @State private var showPortfolio: Bool = false {
-        didSet {
-            if showPortfolio {
-                vm.searchText = ""
-            }
-            if storeManager.purchasedRemoveAds != true {
-                InterstitialAdCounter += 1
-                print(InterstitialAdCounter)
-            }
-            
-        }
-    }
+    
+    @State var showCircleAnimation: Bool = false
+    
+    @State var showPortfolioView: Bool = false
+    
+    @State private var selectedTab = "one"
 
     // Sheet Navigation
-    @State private var showDetailView: Bool = false {
-        didSet {
-            if storeManager.purchasedRemoveAds != true {
-                InterstitialAdCounter += 1
-                print(InterstitialAdCounter)
-            }
-            
-        }
-    }
+    @State private var showDetailView: Bool = false
     
-    @State var showPortfolioView: Bool = false 
+    // Grid spacing variable
+    private let columns: [GridItem] = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        
+    ]
     
-    @State var InterstitialAdCounter = 0 {
-        didSet {
-            if InterstitialAdCounter >= 5 {
-                if storeManager.purchasedRemoveAds != true {
-                    loadInterstitialAd()
-                    InterstitialAdCounter = 0
-
-                }
-            }
-        }
-    }
+    // Grid spacing variable
+    private let spacing: CGFloat = 30
     
-    @State var interstitial: GADInterstitialAd?
-
-    #if targetEnvironment(simulator)
-        // Test Ad
-        var googleBannerInterstitialAdID = "ca-app-pub-3940256099942544/1033173712"
-    #else
-        // Real Ad
-        var googleBannerInterstitialAdID = "ca-app-pub-4186253562269967/5364863972"
-    #endif
     
-    // App Tracking Transparency - Request permission and play ads on open only
-    private func loadInterstitialAd() {
-
-        // Tracking authorization completed. Start loading ads here.
-        let request = GADRequest()
-            GADInterstitialAd.load(
-                withAdUnitID: googleBannerInterstitialAdID,
-                request: request,
-                completionHandler: { [self] ad, error in
-                    
-                    // Check if there is an error
-                    if let error = error {
-                        return
-                    }
-                    interstitial = ad
-                    let root = UIApplication.shared.windows.first?.rootViewController
-                    self.interstitial?.present(fromRootViewController: root!)
-
-                })
-      }
     
     // MARK: Main Body
     // -------------------
@@ -94,25 +43,31 @@ struct HomeView: View {
        
         TabView {
             // First Screen
-            homeView
-                .navigationTitle("")
-                .navigationBarHidden(true)
-                .sheet(isPresented: $showPortfolioView, content: {
-                    PortfolioView(storeManager: storeManager, showPortfolio: $showPortfolioView)
-                })
+            portfolioStatsView
+                
                 .tabItem { VStack {
                     Image(systemName: "bitcoinsign.circle")
                     Text("Market")
                 }}
+                .tag("one")
             
             // Information on the game
-            SettingsView()
+            portfolioView
                 .navigationTitle("")
                 .navigationBarHidden(true)
+//            SettingsView()
+//                .navigationTitle("")
+//                .navigationBarHidden(true)
                 .tabItem { VStack {
-                    Image(systemName: "info.circle")
-                    Text("About")
+                    Image(systemName: "bitcoinsign.circle.fill")
+                    Text("Portfolio")
                 }}
+                .tag("two")
+                .onAppear(perform: {
+                    selectedTab = "two"
+                })
+            
+            
             
             // Game Options Screen
             NewGameScreen()
@@ -120,19 +75,29 @@ struct HomeView: View {
                 .navigationBarHidden(true)
                 .tabItem { VStack {
                     Image(systemName: "gamecontroller")
-                    Text("Options")
+                    Text("Game")
                 }}
             
+            SettingsView()
+                .tabItem { VStack {
+                    Image(systemName: "person")
+                    Text("About")
+                }}
+   
+            
             // In App Purchases Screen
-            InAppStorePurchasesView(storeManager: storeManager)
+            InAppStorePurchasesView(storeManager: vm.storeManager).environmentObject(vm)
                 .navigationTitle("")
                 .navigationBarHidden(true)
                 .tabItem { VStack {
                     Image(systemName: "creditcard")
-                    Text("Remove Ads")
+                    Text("In-App")
                 }}
+
         }
-       
+        .sheet(isPresented: $showPortfolioView, content: {
+            PortfolioView(showPortfolio: $showPortfolioView)
+        })
     }
 }
 
@@ -142,7 +107,7 @@ struct HomeView: View {
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            HomeView(storeManager: StoreManager())
+            HomeView()
                 .navigationBarHidden(true)
                 .environmentObject(dev.homeVM)
         }
@@ -153,6 +118,121 @@ struct HomeView_Previews: PreviewProvider {
 // MARK: Extension to HomeView
 // ----------------------------
 extension HomeView {
+   
+    private var portfolioStatsView: some View {
+        ScrollView {
+            VStack(alignment: .leading) {
+                HStack {
+                    Text("Total Coins")
+                    Spacer()
+                    Text(vm.portfolioCoins.count.description)
+                }
+                HStack {
+                    Text("Total Coin Value")
+                    Spacer()
+                    Text((vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +)).asCurrencyWith2Decimals())
+                    
+                }
+                HStack {
+                    Text("Money")
+                    Spacer()
+                    Text(vm.storeManager.game.gameDollars.asCurrencyWith2Decimals())
+                    
+                }
+                HStack {
+                    Text("Score")
+                    Spacer()
+                    Text((vm.storeManager.game.gameDollars + (vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +))).asCurrencyWith2Decimals())
+                    
+                }
+                HStack {
+                    Text("Gain / Loss")
+                    Spacer()
+                    Text(((vm.storeManager.game.gameDollars + (vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +))) - 100_000).asCurrencyWith2Decimals())
+                    
+                }
+            }
+            
+            Divider()
+            VStack(alignment: .leading) {
+                Text("Owned Coins")
+                    .font(.title)
+                    .fontWeight(.bold)
+                LazyVGrid(
+                    columns: columns,
+                    alignment: .center,
+                    spacing: 10,
+                    pinnedViews: [],
+                    content: {
+                        
+                        ForEach(vm.portfolioCoins) { coin in
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    CoinImageView(coin: coin)
+                                        .frame(width: 25, height: 25, alignment: .center)
+                                    
+                                    Spacer()
+                                    Text(coin.name.description)
+                                }
+                                VStack(alignment: .leading) {
+                                    Text("Owned")
+                                        .fontWeight(.bold)
+                                    Text(coin.currentHoldings?.asNumberString() ?? "")
+                                }
+                                VStack(alignment: .leading) {
+                                    Text("Holdings")
+                                        .fontWeight(.bold)
+                                    Text(coin.currentHoldingsValue.asCurrencyWith2Decimals())
+                                }
+                                HStack {
+                                    Image(systemName: (coin.priceChange24H ?? 1 > 0) ?  "arrow.up.circle" : "arrow.down.circle")
+                                        .resizable()
+                                        .frame(width: 20, height: 20, alignment: .center)
+                                        .foregroundColor(coin.priceChange24H ?? 1 > 0 ? .green : .red)
+                                    Text(coin.priceChange24H?.asCurrencyWith2Decimals() ?? "")
+                                }
+                               
+                                
+                            }
+//                            .frame(width: UIScreen.main.bounds.width / 2.25)
+                            .padding()
+                            
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15)
+                                    .stroke(Color.gray, lineWidth: 1)
+                            )
+                            
+                            
+                        }
+                })
+            }
+           
+        }
+        .padding()
+        .navigationTitle("Profile")
+    }
+    
+    private var portfolioView: some View {
+        ZStack {
+            Color.theme.background
+                .ignoresSafeArea()
+            
+            
+            VStack {
+                homeHeader
+                HomeStatsView(statistics: vm.statistics)
+                SearchBarView(searchText: $vm.searchText)
+                columnTitlesSecondary
+                portfolioCoinsList
+                
+                if vm.storeManager.purchasedRemoveAds != true {
+                    AdMobBanner()
+                }
+            }
+        }
+    }
+    
+    
     private var homeView: some View {
         ZStack {
             Color.theme.background
@@ -160,23 +240,12 @@ extension HomeView {
             
             VStack {
                 homeHeader
-                HomeStatsView(showPortfolio: $showPortfolio)
-                if !showPortfolio {
-                    SearchBarView(searchText: $vm.searchText)
-                }
-                
+                HomeStatsView(statistics: vm.secondRowStatistics)
+                SearchBarView(searchText: $vm.searchText)
                 columnTitles
-                    
-                if !showPortfolio {
-                    allCoinsList
-                    .transition(.move(edge: .leading))
-                } else if showPortfolio {
-                    portfolioCoinsList
-                    .transition(.move(edge: .trailing))
-                }
-                   
-              
-                if storeManager.purchasedRemoveAds != true {
+                allCoinsList
+
+                if vm.storeManager.purchasedRemoveAds != true {
                     AdMobBanner()
                 }
                
@@ -205,27 +274,21 @@ extension HomeView {
                 
                 }
                 .background(
-                    CircleButtonAnimationView(animate: $showPortfolio)
+                    CircleButtonAnimationView(animate: $showCircleAnimation)
                 )
+
             Spacer()
             
             //  Center Description Text
-            Text(showPortfolio ? "Portfolio" : "Live Prices")
+            Text((selectedTab == "one") ? "Live Prices" : "Portfolio")
                 .font(.headline)
                 .fontWeight(.heavy)
                 .foregroundColor(Color.theme.accent)
                 .animation(.none)
-            Spacer()
             
-            // Right Circle Button - handles moving left to right from all coins to portfolio coins
-            CircleButtonView(iconName: "chevron.right")
-                .rotationEffect(Angle(degrees: showPortfolio ? 180 : 0))
-                .onTapGesture {
-                    withAnimation(.spring()) {
-                        showPortfolio.toggle()
-                        print("ShowPortfolio: \(showPortfolio)")
-                    }
-                }
+            Spacer()
+            CircleButtonView(iconName: "plus")
+                .opacity(0)
         }
         .padding(.horizontal)
     }
@@ -255,11 +318,12 @@ extension HomeView {
                     .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 0))
                     .onTapGesture {
                         selectedCoin = coin
-                        showPortfolioView.toggle()
+                        showDetailView.toggle()
                        
                 }
             }
         }
+        
         .listStyle(PlainListStyle())
     }
     
@@ -278,22 +342,7 @@ extension HomeView {
             }
             
             Spacer()
-            if showPortfolio {
-                HStack(spacing: 4) {
-                    Text("Holdings")
-                    Image(systemName: "chevron.down")
-                        .opacity((vm.sortOption == .holdings || vm.sortOption == .holdingsReversed) ? 1.0 : 0.0)
-                        .rotationEffect(Angle(degrees: vm.sortOption == .holdings ? 0 : 180))
-                }
-                .onTapGesture {
-                    withAnimation(.default) {
-                        vm.sortOption = vm.sortOption == .holdings ? .holdingsReversed : .holdings
-                    }
-                }
-                
-                    
-                
-            }
+            
             HStack(spacing: 4) {
                 Text("Price")
                 Image(systemName: "chevron.down")
@@ -322,7 +371,62 @@ extension HomeView {
         .padding(.horizontal)
     }
     
-    
+    private var columnTitlesSecondary: some View {
+        HStack {
+            HStack(spacing: 4) {
+                Text("Coin")
+                Image(systemName: "chevron.down")
+                    .opacity((vm.sortOption == .rank || vm.sortOption == .rankReversed) ? 1.0 : 0.0)
+                    .rotationEffect(Angle(degrees: vm.sortOption == .rank ? 0 : 180))
+            }
+            .onTapGesture {
+                withAnimation(.default) {
+                    vm.sortOption = vm.sortOption == .rank ? .rankReversed : .rank
+                }
+            }
+            
+            Spacer()
+
+            HStack(spacing: 4) {
+                Text("Holdings")
+                Image(systemName: "chevron.down")
+                    .opacity((vm.sortOption == .holdings || vm.sortOption == .holdingsReversed) ? 1.0 : 0.0)
+                    .rotationEffect(Angle(degrees: vm.sortOption == .holdings ? 0 : 180))
+            }
+            .onTapGesture {
+                withAnimation(.default) {
+                    vm.sortOption = vm.sortOption == .holdings ? .holdingsReversed : .holdings
+                }
+            }
+            
+            HStack(spacing: 4) {
+                Text("Price")
+                Image(systemName: "chevron.down")
+                    .opacity((vm.sortOption == .price || vm.sortOption == .priceReversed) ? 1.0 : 0.0)
+                    .rotationEffect(Angle(degrees: vm.sortOption == .price ? 0 : 180))
+            }
+            .onTapGesture {
+                withAnimation(.default) {
+                    vm.sortOption = vm.sortOption == .price ? .priceReversed : .price
+                }
+            }
+            .frame(width: UIScreen.main.bounds.width / 3.5, alignment: .trailing)
+            
+            
+            Button(action: {
+                withAnimation(.linear(duration: 2.0)) {
+                    vm.reloadData()
+                }
+            }, label: {
+                Image(systemName: "goforward")
+            })
+            .rotationEffect(Angle(degrees: vm.isLoading ? 360 : 0), anchor: .center)
+        }
+        .font(.caption)
+        .foregroundColor(Color.theme.secondaryText)
+        .padding(.horizontal)
+        
+    }
     
 
 }

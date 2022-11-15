@@ -10,7 +10,7 @@ import SwiftUI
 struct TradeHistoryView: View {
     
     @EnvironmentObject var vm: HomeViewModel
-    @StateObject var storeManager: StoreManager
+
     @Environment(\.presentationMode) var presentationMode
     
     @State var pickerSelection:Int = 0
@@ -83,9 +83,7 @@ struct TradeHistoryView: View {
                 
                 
             }
-            if storeManager.purchasedRemoveAds != true {
-                AdMobBanner()
-            }
+
             
         }.padding()
     }
@@ -93,7 +91,7 @@ struct TradeHistoryView: View {
 
 struct TradeHistoryView_Previews: PreviewProvider {
     static var previews: some View {
-        TradeHistoryView(storeManager: StoreManager())
+        TradeHistoryView()
     }
 }
 
@@ -104,12 +102,12 @@ extension TradeHistoryView {
             if trade.type == "Sale" {
                 VStack(alignment: .leading) {
                     HStack {
-                        Text("Type")
+                        Text("Type:")
                         Spacer()
                         Text("\(trade.type)").font(.footnote)
                     }
                     HStack {
-                        Text("Coin")
+                        Text("Coin:")
                         Spacer()
                         Text("\(trade.coinName)").font(.subheadline)
                     }
@@ -124,12 +122,12 @@ extension TradeHistoryView {
                         Text(" \(trade.priceOfCrypto.asCurrencyWith6Decimals())").font(.subheadline)
                     }
                     HStack {
-                        Text(trade.type == "Purchase" ? "Spent" : "Earned")
+                        Text(trade.type == "Purchase" ? "Spent:" : "Earned:")
                         Spacer()
                         Text("\(trade.money.asCurrencyWith2Decimals())").font(.subheadline)
                     }
                     HStack {
-                        Text(trade.type == "Purchase" ? "Bought Coins" : "Sold Coins")
+                        Text(trade.type == "Purchase" ? "Bought Amount Of Coins:" : "Sold Amount of Coins")
                         Spacer()
                         Text("\(trade.cryptoCoinAmount.asNumberStringWithSixDecimals())").font(.subheadline)
                     }

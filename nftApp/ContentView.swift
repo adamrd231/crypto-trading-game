@@ -13,7 +13,7 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            HomeView(storeManager: StoreManager())
+            HomeView()
                 .navigationBarHidden(true)
         }
         

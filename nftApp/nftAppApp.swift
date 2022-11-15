@@ -7,29 +7,31 @@
 
 import SwiftUI
 import AppTrackingTransparency
-import StoreKit
 
 @main
 struct nftAppApp: App {
     
     @StateObject private var vm = HomeViewModel()
-    // StoreManager object to make in-app purchases
-    @StateObject var storeManager = StoreManager()
+//    @StateObject var storeManager = StoreManager()
     
-    var productIDs = ["cryptoRemoveAds"]
+//    var productIDs = [
+//        "cryptoRemoveAds",
+//        "design.rdconcepts.purchaseOneThousand",
+//        "design.rdconcepts.crypto.fiveThousand",
+//        "design.rdconcepts.crypto.tenThousand",
+//        "design.rdconepts.crypto.fifteenThousand",
+//        "design.rdconcepts.crypto.twentyFiveThousand",
+//        "design.rdconcepts.crypto.oneHundredThousand",
+//    ]
     
-    private func setupStoreManager() {
-        if storeManager.myProducts.isEmpty {
-            SKPaymentQueue.default().add(storeManager)
-            storeManager.getProducts(productIDs: productIDs)
-        }
-    }
+    
     
     @State private var showLaunchView:Bool = true
     
     init() {
-        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor(Color.theme.accent)]
-        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor(Color.theme.accent)]
+        
+       
+        
     }
     
     // App Tracking Transparency - Request permission and play ads on open only
@@ -45,7 +47,7 @@ struct nftAppApp: App {
             
             ZStack {
                 NavigationView {
-                    HomeView(storeManager: storeManager)
+                    HomeView()
                         .environmentObject(vm)
 
                 }.navigationViewStyle(StackNavigationViewStyle())
@@ -66,7 +68,7 @@ struct nftAppApp: App {
                     requestIDFA()
                 }
                 
-                setupStoreManager()
+//                setupStoreManager()
             })
         }
     }

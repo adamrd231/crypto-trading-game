@@ -10,7 +10,7 @@ import SwiftUI
 struct DetailLoadingView: View {
     
     @Binding var coin: CoinModel?
-    
+
     var body: some View {
         ZStack {
             if let coin = coin {
@@ -24,6 +24,7 @@ struct DetailView: View {
     
     @StateObject private var vm: DetailViewModel
     @State private var showFullDescription: Bool = false
+
     
     // Grid spacing variable
     private let columns: [GridItem] = [
@@ -36,27 +37,30 @@ struct DetailView: View {
     
     init(coin: CoinModel) {
         _vm = StateObject(wrappedValue: DetailViewModel(coin: coin))
-        
+
     }
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                ChartView(coin: vm.coin)
-                // Chart Section
-                overviewTitle
-                Divider()
-                descriptionSection
-                overviewGrid
-                additionalTitle
-                Divider()
-                additionalGrid
-                websiteLinks
+        ZStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    ChartView(coin: vm.coin)
+                    // Chart Section
+                    overviewTitle
+                    Divider()
+                    descriptionSection
+                    overviewGrid
+                    additionalTitle
+                    Divider()
+                    additionalGrid
+                    websiteLinks
+                    
+                }
+                .padding()
                 
             }
-            .padding()
-            
         }
+        
         .navigationTitle(vm.coin.name)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

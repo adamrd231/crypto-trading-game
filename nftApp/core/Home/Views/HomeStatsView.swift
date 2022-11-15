@@ -9,33 +9,24 @@ import SwiftUI
 
 struct HomeStatsView: View {
     
-    @EnvironmentObject private var vm: HomeViewModel
-    
-    @Binding var showPortfolio: Bool
+    var statistics: [StatisticsModel]
     
     var body: some View {
-        VStack {
+        VStack(spacing: 15) {
             HStack {
-                ForEach(vm.statistics) { stat in
+                ForEach(statistics) { stat in
                     StatisticsView(stat: stat)
-                        .frame(width: UIScreen.main.bounds.width / 3)
+                        .frame(width: UIScreen.main.bounds.width / 3.1)
                 }
             }
-            HStack {
-                ForEach(vm.secondRowStatistics) { stat in
-                    StatisticsView(stat: stat)
-                        .frame(width: UIScreen.main.bounds.width / 3)
-                }
-            }
-            .padding(.top, 1)
         }
-        .frame(width: UIScreen.main.bounds.width,
-               alignment: showPortfolio ? .trailing : .leading)
+        .padding(.bottom, 3)
+        .frame(height: UIScreen.main.bounds.height * 0.075)
     }
 }
 
 struct HomeStatsView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeStatsView(showPortfolio: .constant(false)).environmentObject(dev.homeVM)
+        HomeStatsView(statistics: [dev.stat1, dev.stat2, dev.stat3])
     }
 }

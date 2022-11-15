@@ -15,7 +15,6 @@ class CoinDataService {
     var coinSubscription: AnyCancellable?
     
     init() {
-        print("init to get all coins")
         getCoins()
     }
     

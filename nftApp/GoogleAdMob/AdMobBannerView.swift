@@ -10,14 +10,11 @@ import GoogleMobileAds
 import UIKit
 
 final private class BannerVC: UIViewControllerRepresentable  {
-    
-    #if targetEnvironment(simulator)
-        // Test Ad
-        var GoogleBannerAdId = "ca-app-pub-3940256099942544/2934735716"
-    #else
-        // Real Ad
-        var GoogleBannerAdId = "ca-app-pub-4186253562269967/9926608286"
-    #endif
+
+    // Test Ad
+    var GoogleBannerAdId = "ca-app-pub-3940256099942544/2934735716"
+//     Real Ad
+//    var GoogleBannerAdId = "ca-app-pub-4186253562269967/9926608286"
     
     
 

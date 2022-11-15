@@ -10,7 +10,6 @@ import SwiftUI
 struct PortfolioView: View {
     
     @EnvironmentObject var vm: HomeViewModel
-    @StateObject var storeManager: StoreManager
     @State private var selectedCoin: CoinModel?
     @State private var quantityText: String = ""
     @State private var showCheckMark: Bool = false
@@ -64,6 +63,7 @@ struct PortfolioView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
+                    
                     SearchBarView(searchText: $vm.searchText)
                     coinLogoList
                     
@@ -87,9 +87,7 @@ struct PortfolioView: View {
              
                 }
                 Spacer()
-                if storeManager.purchasedRemoveAds != true {
-                    AdMobBanner()
-                }
+ 
             }
             
             .navigationTitle("Buy / Sell Coins")
@@ -109,7 +107,7 @@ struct PortfolioView: View {
                 }
             })
             .sheet(isPresented: $showTradeHistoryView, content: {
-                TradeHistoryView(storeManager: storeManager).environmentObject(vm)
+                TradeHistoryView().environmentObject(vm)
             })
             .alert(isPresented: $showingPaymentAlert, content: {
                 // decide which alert to show
@@ -135,7 +133,7 @@ struct PortfolioView: View {
 // ---------------------------
 struct PortfolioView_Previews: PreviewProvider {
     static var previews: some View {
-        PortfolioView(storeManager: StoreManager(), showPortfolio: .constant(true)).environmentObject(dev.homeVM)
+        PortfolioView(showPortfolio: .constant(true)).environmentObject(dev.homeVM)
     }
 }
 
@@ -175,7 +173,7 @@ extension PortfolioView {
                 // Update Game
                 let numberOfCoins = (1 / coin.currentPrice) * purchaseAmount
                 
-                if vm.game.gameDollars < purchaseAmount {
+                if vm.storeManager.game.gameDollars < purchaseAmount {
                     print("Not Enough Money")
                     // Show Alert that user does not have enough money
                     currentAlert = .purchaseNotSuccessful
@@ -183,7 +181,7 @@ extension PortfolioView {
                     return
                 } else {
                     
-                    vm.game.gameDollars -= purchaseAmount
+                    vm.storeManager.game.gameDollars -= purchaseAmount
                     
                     vm.updateForPurchase(coin: coin, amountSpentPurchasingCrypto: purchaseAmount)
                     vm.updatePortfolio(coin: coin, amount: numberOfCoins)
@@ -213,7 +211,7 @@ extension PortfolioView {
                     return
                 }
                 
-                vm.game.gameDollars += moneyFromSale
+                vm.storeManager.game.gameDollars += moneyFromSale
                 
                 vm.updateForSale(coin: coin, amountOfCryptoSold: saleAmount)
                 let negativeNumber = saleAmount * -1
@@ -315,7 +313,7 @@ extension PortfolioView {
                     Text("Game Money:")
                     Spacer()
                     VStack(alignment: .trailing) {
-                        Text((vm.game.gameDollars ?? 0).asCurrencyWith2Decimals()).font(.caption)
+                        Text((vm.storeManager.game.gameDollars ?? 0).asCurrencyWith2Decimals()).font(.caption)
                         
                     }
                     
@@ -338,7 +336,7 @@ extension PortfolioView {
                         })
                         .multilineTextAlignment(.trailing)
                         .keyboardType(.numberPad)
-                        .foregroundColor(Double(buyAmount.replacingOccurrences(of: ",", with: "")) ?? 0 > vm.game.gameDollars ?? 0 ? Color.theme.red : Color.theme.green).font(.caption)
+                        .foregroundColor(Double(buyAmount.replacingOccurrences(of: ",", with: "")) ?? 0 > vm.storeManager.game.gameDollars ?? 0 ? Color.theme.red : Color.theme.green).font(.caption)
                         
                 }
                 
@@ -348,7 +346,7 @@ extension PortfolioView {
                     if let coin = selectedCoin {
                         calculateAmountReceived(coin: coin)
                             .font(.caption)
-                            .foregroundColor((Double(buyAmount.replacingOccurrences(of: ",", with: "")) ?? 0 > vm.game.gameDollars ?? 0) ? Color.theme.secondaryText : .primary)
+                            .foregroundColor((Double(buyAmount.replacingOccurrences(of: ",", with: "")) ?? 0 > vm.storeManager.game.gameDollars ?? 0) ? Color.theme.secondaryText : .primary)
                     } else {
                         Text("No COin")
                     }

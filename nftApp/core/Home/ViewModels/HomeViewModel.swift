@@ -8,6 +8,8 @@
 import Foundation
 import Combine
 import SwiftUI
+import StoreKit
+
 
 class HomeViewModel: ObservableObject {
     
@@ -15,7 +17,10 @@ class HomeViewModel: ObservableObject {
     @Published var allCoins: [CoinModel] = []
     @Published var portfolioCoins: [CoinModel] = []
     @Published var allTrades: [GameTrade] = []
-    @ObservedObject var game:GameModel = GameModel()
+    
+    // User Statistics model
+    @Published var PortfolioStats: [StatisticsModel] = []
+    
     // Data for creating statistics layouts
     @Published var statistics: [StatisticsModel] = []
     @Published var secondRowStatistics: [StatisticsModel] = []
@@ -41,7 +46,27 @@ class HomeViewModel: ObservableObject {
         case rank, rankReversed, holdings, holdingsReversed, price, priceReversed
     }
     
-   
+    
+   // MARK: Store Manager
+    @Published var storeManager: StoreManager = StoreManager()
+    
+    private func setupStoreManager() {
+        if storeManager.myProducts.isEmpty {
+            SKPaymentQueue.default().add(storeManager)
+            storeManager.getProducts(productIDs: productIDs)
+        }
+    }
+    
+    var productIDs = [
+        "cryptoRemoveAds",
+        "design.rdconcepts.purchaseOneThousand",
+        "design.rdconcepts.crypto.fiveThousand",
+        "design.rdconcepts.crypto.tenThousand",
+        "design.rdconepts.crypto.fifteenThousand",
+        "design.rdconcepts.crypto.twentyFiveThousand",
+        "design.rdconcepts.crypto.oneHundredThousand",
+    ]
+    
 //    let portfolioValue =
 //        portfolioCoins
 //            .map({ $0.currentHoldingsValue })
@@ -49,6 +74,7 @@ class HomeViewModel: ObservableObject {
     
     init() {
         addSubscribers()
+        setupStoreManager()
     }
     
     func addSubscribers() {
@@ -75,7 +101,7 @@ class HomeViewModel: ObservableObject {
         
         // Updates the market data
         marketDataService.$marketData
-            .combineLatest($portfolioCoins)
+            .combineLatest($portfolioCoins, storeManager.game.$gameDollars)
             .map(mapGlobalMarketData)
             .sink { [weak self] (returnedStats) in
                 self?.statistics = returnedStats.0
@@ -91,11 +117,77 @@ class HomeViewModel: ObservableObject {
             .sink { returnedTrades in
                 self.allTrades = returnedTrades
                 self.totalSpentInTrades = self.allTrades.map({ $0.money }).reduce(0, +)
-                print("total spent in Trades: \(self.totalSpentInTrades)")
                 
             }
             .store(in: &cancellables)
 
+    }
+    
+    private func mapGlobalMarketData(marketDataModel: MarketDataModel?, portfolioCoins: [CoinModel], gameDollars: Double) -> ([StatisticsModel], [StatisticsModel]) {
+        print("Game Dollars Returned: \(gameDollars)")
+        var stats: [StatisticsModel] = []
+        var secondStats: [StatisticsModel] = []
+        
+        guard let data = marketDataModel else { return (stats, secondStats) }
+        
+        let marketCap = StatisticsModel(title: "Market Cap", value: data.marketCap, percentageChanged: data.marketCapChangePercentage24HUsd)
+        let volume = StatisticsModel(title: "24h Volume", value: data.volume)
+        let bitcoinDominance = StatisticsModel(title: "BTC Share", value: data.bitDominance)
+        
+        
+        let portfolioValue =
+            portfolioCoins
+                .map({ $0.currentHoldingsValue })
+                .reduce(0, +)
+        
+        let previousValue =
+            portfolioCoins
+                .map{ (coin) -> Double in
+                    let currentValue = coin.currentHoldingsValue
+                    let percentChange = (coin.priceChangePercentage24H ?? 0) * 0.01
+                    let previousValue = currentValue / (percentChange + 1)
+                    return previousValue
+                }
+                .reduce(0, +)
+
+        
+        let percentageChange = ((portfolioValue - previousValue) / previousValue) * 100
+        
+        let portfolio = StatisticsModel(
+            title: "Crypto Holdings",
+            value: portfolioValue.asCurrencyWith2Decimals(),
+            percentageChanged: percentageChange
+        )
+        
+        let startingDate = storeManager.game.startingDate
+        let startingDateStat = StatisticsModel(title: "Start Date", value: startingDate.asShortDateString())
+        
+        let numberOfTrades = allTrades.count
+        let numberOfTradesStat = StatisticsModel(title: "# of Trades", value: numberOfTrades.description)
+        
+        
+        let totalUSDMoney:Double = gameDollars
+        let totalUSDMoneyStat = StatisticsModel(title: "Game Monies", value: totalUSDMoney.asCurrencyWith2Decimals())
+        
+        let totalMoneyOverall = portfolioValue + totalUSDMoney
+        let totalMoneyOverallStat = StatisticsModel(title: "Total Score", value: totalMoneyOverall.asCurrencyWith2Decimals())
+        
+        secondStats.append(contentsOf: [
+            marketCap,
+            startingDateStat,
+            numberOfTradesStat,
+            
+        ])
+
+        stats.append(contentsOf: [
+            
+            totalUSDMoneyStat,
+            portfolio,
+            totalMoneyOverallStat
+
+        ])
+        
+        return (stats, secondStats)
     }
     
     private func mapTradesToArray(trades: [TradeEntity]) -> [GameTrade] {
@@ -148,75 +240,7 @@ class HomeViewModel: ObservableObject {
             }
     }
     
-    private func mapGlobalMarketData(marketDataModel: MarketDataModel?, portfolioCoins: [CoinModel]) -> ([StatisticsModel], [StatisticsModel]) {
-        var stats: [StatisticsModel] = []
-        var secondStats: [StatisticsModel] = []
-        
-        guard let data = marketDataModel else { return (stats, secondStats) }
-        
-        let marketCap = StatisticsModel(title: "Market Cap", value: data.marketCap, percentageChanged: data.marketCapChangePercentage24HUsd)
-        let volume = StatisticsModel(title: "24h Volume", value: data.volume)
-        let bitcoinDominance = StatisticsModel(title: "BTC Share", value: data.bitDominance)
-        
-        
-        let portfolioValue =
-            portfolioCoins
-                .map({ $0.currentHoldingsValue })
-                .reduce(0, +)
-        
-        let previousValue =
-            portfolioCoins
-                .map{ (coin) -> Double in
-                    let currentValue = coin.currentHoldingsValue
-                    let percentChange = (coin.priceChangePercentage24H ?? 0) * 0.01
-                    let previousValue = currentValue / (percentChange + 1)
-                    return previousValue
-                }
-                .reduce(0, +)
 
-        
-        let percentageChange = ((portfolioValue - previousValue) / previousValue) * 100
-        
-        let portfolio = StatisticsModel(
-            title: "Crypto Value",
-            value: portfolioValue.asCurrencyWith2Decimals(),
-            percentageChanged: percentageChange
-        )
-
-        stats.append(contentsOf: [
-                        marketCap,
-                         volume,
-                         bitcoinDominance,
-                         portfolio
-        ])
-        
-        
-        let startingDate = game.startingDate
-        let startingDateStat = StatisticsModel(title: "Start Date", value: startingDate.asShortDateString())
-        
-        let numberOfTrades = allTrades.count
-        let numberOfTradesStat = StatisticsModel(title: "# of Trades", value: allTrades.count.description)
-        
-        let totalUSDMoney:Double = game.gameDollars ?? 0
-        let totalUSDMoneyStat = StatisticsModel(title: "Game Money", value: (game.gameDollars ?? 0).asCurrencyWith2Decimals())
-        
-        let totalMoneyOverall = portfolioValue + totalUSDMoney
-        
-        print("total money overall: \(totalMoneyOverall)")
-                                                                                
-        
-        let totalMoneyOverallStat = StatisticsModel(title: "Total", value: totalMoneyOverall.asCurrencyWith2Decimals())
-        
-        secondStats.append(contentsOf: [
-            startingDateStat,
-            numberOfTradesStat,
-            totalUSDMoneyStat,
-            totalMoneyOverallStat
-        ])
-        
-        
-        return (stats, secondStats)
-    }
     
     private func filterAndSortcoins(text: String, coins: [CoinModel], sort: SortOption) -> [CoinModel] {
         var updatedCoins = filterCoins(text: text, coins: coins)
@@ -261,4 +285,6 @@ class HomeViewModel: ObservableObject {
         }
         
     }
+    
+    
 }

@@ -20,9 +20,7 @@ class NetworkingManager {
             case .unknown: return "[⛔️] Uknown error occured"
             }
         }
-        
     }
-    
     
     static func download(url: URL) -> AnyPublisher<Data, Error> {
         return URLSession.shared.dataTaskPublisher(for: url)
@@ -43,7 +41,7 @@ class NetworkingManager {
     static func handleCompletion(completion: Subscribers.Completion<Error>) {
         switch completion {
         case .finished: break
-        case .failure(let error): print(error.localizedDescription)
+        case .failure(let error): print(error.localizedDescription) // print just the error if model not working for a better description
         }
     }
 }

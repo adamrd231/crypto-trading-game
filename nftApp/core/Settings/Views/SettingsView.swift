@@ -32,23 +32,36 @@ struct SettingsView: View {
     var body: some View {
 
         List {
-            VStack(alignment: .leading, spacing: 5) {
-                Text("Crypto-nade Stand Game")
-                    .font(.title3)
-                    .fontWeight(.light)
-                    .multilineTextAlignment(.center)
-                Text("Designed & Developed By")
-                    .font(.caption)
-                    .fontWeight(.light)
-                Text("Adam Reed")
-                    .font(.caption)
-      
-            }.padding()
+            Section(header: Text("Game")) {
+                HStack(spacing: 12) {
+                    Image("1024")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 66, height: 66)
+                        .cornerRadius(20)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Crypto Stand Game")
+                            .font(.title3)
+                            .fontWeight(.light)
+                            .multilineTextAlignment(.center)
+                        Text("Designed & Developed By")
+                            .font(.caption)
+                            .fontWeight(.light)
+                        Text("Adam Reed")
+                            .font(.caption)
+              
+                    }
+                }.padding(.vertical)
+                
+            }
+            
             settingsSection
             coinGeckoSection
             developerSection
             privacyPolicy
         }
+        .navigationTitle("")
+        .navigationBarHidden(true)
         .accentColor(.blue)
         .listStyle(GroupedListStyle())
         .toolbar(content: {
@@ -84,16 +97,15 @@ extension SettingsView {
                     .resizable()
                     .frame(width: 100, height: 100)
      
-                    .clipShape(RoundedRectangle(cornerRadius: 50.0))
-                VStack(alignment: .leading) {
-                    Text("Adam Reed").fontWeight(.bold)
-                    Text("Developer")
-                }
+                    .clipShape(RoundedRectangle(cornerRadius: 25.0))
+                
             }
             
                 
             VStack(alignment: .leading, spacing: 10) {
-                
+
+                Text("Adam Reed").fontWeight(.bold)
+                Text("Developer")
                 Text("This App was made with inspiration from @SwiftfulThinking course on Youtube and utilizing CoinGecko's API for cryptocurrency pricing and information. It uses MVVM architecture, Combine and CoreData. The app was expanded upon by making it into a free to use crptyo trading game.")
                     
                     .lineLimit(showfullDescription ? nil : 3)

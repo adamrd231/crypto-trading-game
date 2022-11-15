@@ -12,13 +12,14 @@ struct StatisticsView: View {
     let stat: StatisticsModel
     
     var body: some View {
-        VStack(alignment: .center, spacing: 4) {
+        VStack(alignment: .center, spacing: 3) {
             Text(stat.title)
                 .font(.caption)
                 .foregroundColor(Color.theme.secondaryText)
             Text(stat.value)
                 .font(.headline)
                 .foregroundColor(Color.theme.accent)
+            
             HStack(spacing: 5) {
                 Image(systemName: "triangle.fill")
                     .font(.caption2)
@@ -26,10 +27,10 @@ struct StatisticsView: View {
                                         stat.percentageChanged ?? 0 >= 0 ? 0 : 180))
                 Text(stat.percentageChanged?.asPercentString() ?? "")
             }
+            
             .foregroundColor(stat.percentageChanged ?? 0 >= 0 ? Color.theme.green : Color.theme.red)
             .opacity(stat.percentageChanged == nil ? 0 : 1.0)
-            
-            
+            Spacer()
         }
     }
 }

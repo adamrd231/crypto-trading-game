@@ -7,24 +7,25 @@
 
 import Foundation
 import StoreKit
+import SwiftUI
 
 class StoreManager: NSObject, ObservableObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
     
     @Published var myProducts = [SKProduct]()
+    @Published var myConsumableProducts = [SKProduct]()
     var request: SKProductsRequest!
     @Published var transactionState: SKPaymentTransactionState?
     
-    #if targetEnvironment(simulator)
-        // Test dev environment, run as if ads were purchased
-        @Published var purchasedRemoveAds = true
-    #else
-        // If not simulator, run ads as normal
-        @Published var purchasedRemoveAds = UserDefaults.standard.bool(forKey: "purchasedRemoveAds") {
-            didSet {
-                UserDefaults.standard.setValue(self.purchasedRemoveAds, forKey: "purchasedRemoveAds")
-            }
+    
+    
+    @Published var game:GameModel = GameModel()
+ 
+    // If not simulator, run ads as normal
+    @Published var purchasedRemoveAds = UserDefaults.standard.bool(forKey: "purchasedRemoveAds") {
+        didSet {
+            UserDefaults.standard.setValue(self.purchasedRemoveAds, forKey: "purchasedRemoveAds")
         }
-    #endif
+    }
     
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         print("Did receive response")
@@ -32,7 +33,12 @@ class StoreManager: NSObject, ObservableObject, SKProductsRequestDelegate, SKPay
         if !response.products.isEmpty {
             for fetchedProduct in response.products {
                 DispatchQueue.main.async {
-                    self.myProducts.append(fetchedProduct)
+                    if fetchedProduct.localizedTitle == "Remove Advertising" {
+                        self.myProducts.append(fetchedProduct)
+                    } else {
+                        self.myConsumableProducts.append(fetchedProduct)
+                        print("price int value: \(fetchedProduct.price.intValue)")
+                    }
                 }
             }
         }
@@ -58,13 +64,54 @@ class StoreManager: NSObject, ObservableObject, SKProductsRequestDelegate, SKPay
             case .purchased:
                 UserDefaults.standard.setValue(true, forKey: transaction.payment.productIdentifier)
                 queue.finishTransaction(transaction)
-                purchasedRemoveAds = true
                 transactionState = .purchased
+                print("Tranaction description \(transaction.payment.productIdentifier)")
+                
+                // With succesfull purchase, do the correct thing per purchase
+                // Remove Ads
+                if transaction.payment.productIdentifier == "cryptoRemoveAds" {
+                    purchasedRemoveAds = true
+                }
+                
+                // Purchase additional monies
+                if transaction.payment.productIdentifier == "design.rdconcepts.purchaseOneThousand" {
+                    print("Add game money")
+                    game.gameDollars += 1000
+                    print(self.game.gameDollars.asCurrencyWith2Decimals())
+                    
+                }
+                if transaction.payment.productIdentifier == "design.rdconcepts.crypto.fiveThousand" {
+                    print("Add game money")
+                    game.gameDollars += 5000
+                    print(self.game.gameDollars.asCurrencyWith2Decimals())
+                }
+                if transaction.payment.productIdentifier == "design.rdconcepts.crypto.tenThousand" {
+                    print("Add game money")
+                    game.gameDollars += 10000
+                    print(self.game.gameDollars.asCurrencyWith2Decimals())
+                }
+                if transaction.payment.productIdentifier == "design.rdconepts.crypto.fifteenThousand" {
+                    print("Add game money")
+                    game.gameDollars += 15000
+                    print(self.game.gameDollars.asCurrencyWith2Decimals())
+                }
+                if transaction.payment.productIdentifier == "design.rdconcepts.crypto.twentyFiveThousand" {
+                    print("Add game money")
+                    game.gameDollars += 25000
+                    print(self.game.gameDollars.asCurrencyWith2Decimals())
+                }
+                if transaction.payment.productIdentifier == "design.rdconcepts.crypto.oneHundredThousand" {
+                    print("Add game money")
+                    game.gameDollars += 100000
+                    print(self.game.gameDollars.asCurrencyWith2Decimals())
+                }
+               
             case .restored:
                 UserDefaults.standard.setValue(true, forKey: transaction.payment.productIdentifier)
                 queue.finishTransaction(transaction)
-                purchasedRemoveAds = true
                 transactionState = .restored
+                
+                purchasedRemoveAds = true
             case .failed, .deferred:
                 print("Payment Queue Error: \(String(describing: transaction.error))")
                     queue.finishTransaction(transaction)
@@ -79,10 +126,12 @@ class StoreManager: NSObject, ObservableObject, SKProductsRequestDelegate, SKPay
         if SKPaymentQueue.canMakePayments() {
             let payment = SKPayment(product: product)
             SKPaymentQueue.default().add(payment)
+            
         } else {
             print("User can't make payment.")
         }
     }
+    
     
     
     
