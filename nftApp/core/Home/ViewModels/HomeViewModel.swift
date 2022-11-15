@@ -10,7 +10,6 @@ import Combine
 import SwiftUI
 import StoreKit
 
-
 class HomeViewModel: ObservableObject {
     
     // Data Model Variables
@@ -20,6 +19,8 @@ class HomeViewModel: ObservableObject {
     
     // User Statistics model
     @Published var PortfolioStats: [StatisticsModel] = []
+    @Published var Portfolio24Change: Double = 0
+    
     
     // Data for creating statistics layouts
     @Published var statistics: [StatisticsModel] = []
@@ -106,6 +107,7 @@ class HomeViewModel: ObservableObject {
             .sink { [weak self] (returnedStats) in
                 self?.statistics = returnedStats.0
                 self?.secondRowStatistics = returnedStats.1
+                self?.Portfolio24Change = returnedStats.2
                 self?.isLoading = false
             }
             .store(in: &cancellables)
@@ -123,12 +125,12 @@ class HomeViewModel: ObservableObject {
 
     }
     
-    private func mapGlobalMarketData(marketDataModel: MarketDataModel?, portfolioCoins: [CoinModel], gameDollars: Double) -> ([StatisticsModel], [StatisticsModel]) {
+    private func mapGlobalMarketData(marketDataModel: MarketDataModel?, portfolioCoins: [CoinModel], gameDollars: Double) -> ([StatisticsModel], [StatisticsModel], Double) {
         print("Game Dollars Returned: \(gameDollars)")
         var stats: [StatisticsModel] = []
         var secondStats: [StatisticsModel] = []
         
-        guard let data = marketDataModel else { return (stats, secondStats) }
+        guard let data = marketDataModel else { return (stats, secondStats, 0) }
         
         let marketCap = StatisticsModel(title: "Market Cap", value: data.marketCap, percentageChanged: data.marketCapChangePercentage24HUsd)
         let volume = StatisticsModel(title: "24h Volume", value: data.volume)
@@ -187,7 +189,11 @@ class HomeViewModel: ObservableObject {
 
         ])
         
-        return (stats, secondStats)
+        // selling price substracted from intial purchase price
+        let startingPrice = portfolioCoins.map({ $0.currentHoldingsValue }).reduce(0,+)
+        let purchasePrice = allTrades.map({ $0.priceOfCrypto * $0.cryptoCoinAmount }).reduce(0,+)
+        var portfolio24HourChange = ((startingPrice - purchasePrice) / startingPrice) * 100
+        return (stats, secondStats, portfolio24HourChange)
     }
     
     private func mapTradesToArray(trades: [TradeEntity]) -> [GameTrade] {

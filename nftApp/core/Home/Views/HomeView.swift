@@ -34,8 +34,8 @@ struct HomeView: View {
     
     // Grid spacing variable
     private let spacing: CGFloat = 30
-    
-    
+    @State var dailyChangeForPortfolio: Double = 0
+
     
     // MARK: Main Body
     // -------------------
@@ -44,11 +44,13 @@ struct HomeView: View {
         TabView {
             // First Screen
             portfolioStatsView
-                
+                .navigationBarHidden(true)
+                .navigationTitle("")
                 .tabItem { VStack {
-                    Image(systemName: "bitcoinsign.circle")
-                    Text("Market")
+                    Image(systemName: "person.crop.circle")
+                    Text("Portfolio")
                 }}
+    
                 .tag("one")
             
             // Information on the game
@@ -60,7 +62,7 @@ struct HomeView: View {
 //                .navigationBarHidden(true)
                 .tabItem { VStack {
                     Image(systemName: "bitcoinsign.circle.fill")
-                    Text("Portfolio")
+                    Text("Market")
                 }}
                 .tag("two")
                 .onAppear(perform: {
@@ -115,42 +117,87 @@ struct HomeView_Previews: PreviewProvider {
 }
 
 
+struct PortfolioStatDouble: View {
+    let title: String
+    let stat: Double
+    
+    var body: some View {
+        HStack(alignment: .center) {
+            Text(title)
+                .fontWeight(.bold)
+            Spacer()
+            Text(stat.asCurrencyWith2Decimals())
+        }
+    }
+}
+
+struct PortfolioStatNumber: View {
+    let title: String
+    let value: Double
+    var body: some View {
+        HStack(alignment: .center) {
+            Text(title)
+                .fontWeight(.bold)
+            Spacer()
+            Text(String(format: "%.2f", value))
+        }
+    }
+}
+
+struct PortfolioStatDate: View {
+    let title: String
+    let date: Date
+    
+    var body: some View {
+        HStack(alignment: .center) {
+            Text(title)
+                .fontWeight(.bold)
+            Spacer()
+            Text(date.asShortDateString())
+        }
+    }
+}
+
+struct PortfolioStatePercentage: View {
+    let title: String
+    let value: Double
+    var body: some View {
+        HStack(alignment: .center) {
+            Text(title)
+                .fontWeight(.bold)
+            Spacer()
+            Text(value.asPercentString())
+                .foregroundColor(value > 0 ? .green : .red)
+        }
+    }
+}
 // MARK: Extension to HomeView
 // ----------------------------
 extension HomeView {
    
     private var portfolioStatsView: some View {
         ScrollView {
+            HStack {
+                Text("Portfolio")
+                    .font(.title)
+                    .fontWeight(.bold)
+                Spacer()
+            }
+           
             VStack(alignment: .leading) {
-                HStack {
-                    Text("Total Coins")
-                    Spacer()
-                    Text(vm.portfolioCoins.count.description)
-                }
-                HStack {
-                    Text("Total Coin Value")
-                    Spacer()
-                    Text((vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +)).asCurrencyWith2Decimals())
-                    
-                }
-                HStack {
-                    Text("Money")
-                    Spacer()
-                    Text(vm.storeManager.game.gameDollars.asCurrencyWith2Decimals())
-                    
-                }
-                HStack {
-                    Text("Score")
-                    Spacer()
-                    Text((vm.storeManager.game.gameDollars + (vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +))).asCurrencyWith2Decimals())
-                    
-                }
-                HStack {
-                    Text("Gain / Loss")
-                    Spacer()
-                    Text(((vm.storeManager.game.gameDollars + (vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +))) - 100_000).asCurrencyWith2Decimals())
-                    
-                }
+                PortfolioStatDate(title: "Start Date", date: vm.storeManager.game.startingDate)
+                PortfolioStatDouble(title: "Money", stat: vm.storeManager.game.gameDollars)
+                PortfolioStatDouble(title: "Score", stat: vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +) + vm.storeManager.game.gameDollars)
+            }
+            Divider()
+            VStack(alignment: .leading) {
+                PortfolioStatNumber(title: "Unique Coins", value: Double(vm.portfolioCoins.count))
+                PortfolioStatNumber(title: "Total Coins", value: vm.portfolioCoins.map({ $0.currentHoldings ?? 0 }).reduce(0,+))
+                PortfolioStatDouble(title: "Total Coin Value", stat: vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +))
+            }
+            Divider()
+            VStack(alignment: .leading) {
+                PortfolioStatePercentage(title: "Daily Change", value: vm.Portfolio24Change)
             }
             
             Divider()
@@ -158,58 +205,22 @@ extension HomeView {
                 Text("Owned Coins")
                     .font(.title)
                     .fontWeight(.bold)
-                LazyVGrid(
-                    columns: columns,
-                    alignment: .center,
-                    spacing: 10,
-                    pinnedViews: [],
-                    content: {
-                        
-                        ForEach(vm.portfolioCoins) { coin in
-                            VStack(alignment: .leading, spacing: 10) {
-                                HStack {
-                                    CoinImageView(coin: coin)
-                                        .frame(width: 25, height: 25, alignment: .center)
-                                    
-                                    Spacer()
-                                    Text(coin.name.description)
-                                }
-                                VStack(alignment: .leading) {
-                                    Text("Owned")
-                                        .fontWeight(.bold)
-                                    Text(coin.currentHoldings?.asNumberString() ?? "")
-                                }
-                                VStack(alignment: .leading) {
-                                    Text("Holdings")
-                                        .fontWeight(.bold)
-                                    Text(coin.currentHoldingsValue.asCurrencyWith2Decimals())
-                                }
-                                HStack {
-                                    Image(systemName: (coin.priceChange24H ?? 1 > 0) ?  "arrow.up.circle" : "arrow.down.circle")
-                                        .resizable()
-                                        .frame(width: 20, height: 20, alignment: .center)
-                                        .foregroundColor(coin.priceChange24H ?? 1 > 0 ? .green : .red)
-                                    Text(coin.priceChange24H?.asCurrencyWith2Decimals() ?? "")
-                                }
-                               
-                                
-                            }
-//                            .frame(width: UIScreen.main.bounds.width / 2.25)
-                            .padding()
-                            
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 15)
-                                    .stroke(Color.gray, lineWidth: 1)
-                            )
-                            
-                            
-                        }
-                })
+                
+                if vm.allCoins.count > 0 {
+                    LazyVGrid(
+                        columns: columns,
+                        alignment: .center,
+                        spacing: 10,
+                        pinnedViews: [],
+                        content: {
+                            CoinPortfolioView(coins: vm.allCoins)
+                    })
+                } else {
+                    Text("No Coins... Yet.")
+                }
             }
-           
         }
         .padding()
-        .navigationTitle("Profile")
     }
     
     private var portfolioView: some View {
