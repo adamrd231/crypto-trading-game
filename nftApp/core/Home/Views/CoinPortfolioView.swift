@@ -67,7 +67,7 @@ struct CoinView: View {
             CoinStat(title: "Holdings", coinStat: coin.currentHoldingsValue )
             CoinStat(title: "Price", coinStat: coin.currentPrice )
             ValueChangeStat(title: "24 Change", coinStat: coin.priceChange24H ?? 0)
-            ValueChangeStat(title: "Lifetime Change", coinStat: coin.athChangePercentage ?? 0)
+            CoinStat(title: "Market Rank", coinStat: coin.marketCapRank ?? 0)
         }
         .padding()
         .overlay(
@@ -84,7 +84,9 @@ struct CoinPortfolioView: View {
     
     var body: some View {
         ForEach(vm.portfolioCoins) { coin in
-            CoinView(coin: coin)
+            NavigationLink(destination: DetailView(coin: coin)) {
+                CoinView(coin: coin)
+            }
         }
     }
 }

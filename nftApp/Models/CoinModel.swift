@@ -49,7 +49,12 @@ JSON:
 
 import Foundation
 
-struct CoinModel: Identifiable, Codable {
+struct CoinModel: Identifiable, Codable, Equatable {
+    
+    static func == (lhs: CoinModel, rhs: CoinModel) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     
     let id, symbol, name: String
     let image: String

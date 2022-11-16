@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ChartView: View {
+struct ProfileChartView: View {
     
     private let data: [Double]
     
@@ -28,9 +28,12 @@ struct ChartView: View {
         
         let priceChange = (data.last ?? 0) - (data.first ?? 0)
         lineColor = priceChange > 0 ? Color.theme.green : Color.theme.red
+        
         endingDate = Date(coinGeckoString: coin.lastUpdated ?? "")
         startingDate = endingDate.addingTimeInterval(-7*24*60*60)
+        
     }
+    
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -52,21 +55,24 @@ struct ChartView: View {
     }
 }
 
-struct ChartView_Previews: PreviewProvider {
+struct ProfileChartView_Previews: PreviewProvider {
     static var previews: some View {
         ChartView(coin: dev.coin)
+            
     }
 }
 
-extension ChartView {
+extension ProfileChartView {
     private var chartView: some View {
         GeometryReader { geo in
             Path { path in
                 for index in data.indices {
                     
                     let xPosition = geo.size.width / CGFloat(data.count) * CGFloat(index + 1)
+                    
                     let yAxis = maxY - minY
                     let yPosition = (1 - CGFloat((data[index] - minY) / yAxis)) * geo.size.height
+                    
                     
                     if index == 0 {
                         path.move(to: CGPoint(x: xPosition, y: yPosition))

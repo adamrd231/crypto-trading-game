@@ -10,34 +10,30 @@ import SwiftUI
 struct CoinRowView: View {
     
     let coin: CoinModel
-    let showHoldingsColumn: Bool
+    let userOwnsCoin: Bool
     
     var body: some View {
         HStack(spacing: 0) {
             leftColumn
             Spacer()
-            if showHoldingsColumn {
-                centerColumn
-            }
+            centerColumn
             rightColumn
         }
         .font(.subheadline)
         .background(Color.theme.background.opacity(0.001))
     }
-    
 }
 
 struct CoinRowView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            CoinRowView(coin: dev.coin, showHoldingsColumn: true)
+            CoinRowView(coin: dev.coin, userOwnsCoin: true)
                 .previewLayout(.sizeThatFits)
             
-            CoinRowView(coin: dev.coin, showHoldingsColumn: true)
+            CoinRowView(coin: dev.coin, userOwnsCoin: false)
                 .previewLayout(.sizeThatFits)
                 .preferredColorScheme(.dark)
         }
-        
     }
 }
 
@@ -45,7 +41,7 @@ struct CoinRowView_Previews: PreviewProvider {
 extension CoinRowView {
     
     private var leftColumn: some View {
-        HStack(spacing:0) {
+        HStack(alignment: .center, spacing: 10) {
             Text("\(coin.rank)")
                 .font(.caption)
                 .foregroundColor(Color.theme.secondaryText)
@@ -53,17 +49,29 @@ extension CoinRowView {
             // Replace this with actual images downloaded from internet
             CoinImageView(coin: coin).frame(width: 30, height: 30)
             Text(coin.symbol.uppercased())
-                .padding(.leading, 6)
-                .foregroundColor(Color.theme.accent)
+                .fixedSize(horizontal: true, vertical: true)
+
+            if (userOwnsCoin) {
+                Image(systemName: "checkmark.circle")
+                    .resizable()
+                    .frame(width: 15, height: 15, alignment: .center)
+                    .foregroundColor(Color.theme.green)
+            }
         }
     }
     
     private var centerColumn: some View {
 
-        VStack(alignment: .trailing) {
-            Text(coin.currentHoldingsValue.asCurrencyWith2Decimals())
-                .bold()
-            Text((coin.currentHoldings ?? 0).formattedwithAbbreviations())
+        VStack(alignment: .center) {
+            HStack {
+                Text(coin.ath?.asCurrencyWith2Decimals() ?? "N/A")
+                    .font(.caption)
+                    .bold()
+                Text(coin.atl?.asCurrencyWith2Decimals() ?? "N/A")
+                    .font(.caption)
+                    .bold()
+            }
+            .lineLimit(1)
         }
         .foregroundColor(Color.theme.accent)
 
@@ -71,7 +79,8 @@ extension CoinRowView {
     
     private var rightColumn: some View {
         VStack {
-            Text(coin.currentPrice.asCurrencyWith6Decimals())
+            Text(coin.currentPrice.asCurrencyWith2Decimals())
+                .font(.caption)
                 .bold()
                 .foregroundColor(Color.theme.accent)
             

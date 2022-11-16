@@ -34,7 +34,7 @@ class DeveloperPreview {
     let stat6 = StatisticsModel(title: "Portfolio Value", value: "$50.4k", percentageChanged: -12.34)
     
     let coin = CoinModel(id: "bitcoin",
-                         symbol: "btc",
+                         symbol: "btcdc",
                          name: "Bitcoin",
                          image: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579",
                          currentPrice: 61400,

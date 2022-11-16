@@ -87,7 +87,6 @@ struct PortfolioView: View {
              
                 }
                 Spacer()
- 
             }
             
             .navigationTitle("Buy / Sell Coins")

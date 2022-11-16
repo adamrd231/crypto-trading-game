@@ -180,6 +180,8 @@ class HomeViewModel: ObservableObject {
             numberOfTradesStat,
             
         ])
+        
+       
 
         stats.append(contentsOf: [
             
