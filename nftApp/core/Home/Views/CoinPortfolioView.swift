@@ -84,7 +84,7 @@ struct CoinPortfolioView: View {
     
     var body: some View {
         ForEach(vm.portfolioCoins) { coin in
-            NavigationLink(destination: DetailView(coin: coin)) {
+            NavigationLink(destination: DetailView(coin: coin, userOwnsCoin: vm.portfolioCoins.contains(coin))) {
                 CoinView(coin: coin)
             }
         }

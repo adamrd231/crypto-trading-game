@@ -126,7 +126,6 @@ class HomeViewModel: ObservableObject {
     }
     
     private func mapGlobalMarketData(marketDataModel: MarketDataModel?, portfolioCoins: [CoinModel], gameDollars: Double) -> ([StatisticsModel], [StatisticsModel], Double) {
-        print("Game Dollars Returned: \(gameDollars)")
         var stats: [StatisticsModel] = []
         var secondStats: [StatisticsModel] = []
         
@@ -135,7 +134,6 @@ class HomeViewModel: ObservableObject {
         let marketCap = StatisticsModel(title: "Market Cap", value: data.marketCap, percentageChanged: data.marketCapChangePercentage24HUsd)
         let volume = StatisticsModel(title: "24h Volume", value: data.volume)
         let bitcoinDominance = StatisticsModel(title: "BTC Share", value: data.bitDominance)
-        
         
         let portfolioValue =
             portfolioCoins
@@ -163,14 +161,10 @@ class HomeViewModel: ObservableObject {
         
         let startingDate = storeManager.game.startingDate
         let startingDateStat = StatisticsModel(title: "Start Date", value: startingDate.asShortDateString())
-        
         let numberOfTrades = allTrades.count
         let numberOfTradesStat = StatisticsModel(title: "# of Trades", value: numberOfTrades.description)
-        
-        
         let totalUSDMoney:Double = gameDollars
         let totalUSDMoneyStat = StatisticsModel(title: "Game Monies", value: totalUSDMoney.asCurrencyWith2Decimals())
-        
         let totalMoneyOverall = portfolioValue + totalUSDMoney
         let totalMoneyOverallStat = StatisticsModel(title: "Total Score", value: totalMoneyOverall.asCurrencyWith2Decimals())
         
@@ -181,8 +175,6 @@ class HomeViewModel: ObservableObject {
             
         ])
         
-       
-
         stats.append(contentsOf: [
             
             totalUSDMoneyStat,
@@ -190,7 +182,6 @@ class HomeViewModel: ObservableObject {
             totalMoneyOverallStat
 
         ])
-        
         // selling price substracted from intial purchase price
         let startingPrice = portfolioCoins.map({ $0.currentHoldingsValue }).reduce(0,+)
         let purchasePrice = allTrades.map({ $0.priceOfCrypto * $0.cryptoCoinAmount }).reduce(0,+)
@@ -205,24 +196,16 @@ class HomeViewModel: ObservableObject {
             var addTrade = GameTrade(type: trade.type ?? "", coinName: trade.cryptoName ?? "", priceOfCrypto: trade.priceOfCrypto, dateOfTrade: trade.dateOfTrade ?? Date(), money: trade.money, cryptoCoinAmount: trade.cryptoCoinAmount)
             createTrades.append(addTrade)
         }
-        
         createTrades.sort(by: {$0.dateOfTrade > $1.dateOfTrade})
         
         return createTrades
     }
     
     func updateForPurchase(coin: CoinModel, amountSpentPurchasingCrypto: Double) {
-
         portfolioDataService.saveCryptoCoinPurchase(coin: coin, amountOfMoneySpent: amountSpentPurchasingCrypto)
-
-    
-        
- 
     }
     
     func updateForSale(coin: CoinModel, amountOfCryptoSold: Double) {
-        
-        print("Sell crypto")
         portfolioDataService.saveCryptoCoinSale(coin: coin, amountOfCryptoSold: amountOfCryptoSold)
     }
     

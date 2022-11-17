@@ -48,6 +48,7 @@
 		669AB7D8278A9E6500873C4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 669AB7D7278A9E6500873C4B /* Assets.xcassets */; };
 		669AB7DB278A9E6500873C4B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 669AB7DA278A9E6500873C4B /* Preview Assets.xcassets */; };
 		669AB7E4278A9ED300873C4B /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669AB7E3278A9ED300873C4B /* Color.swift */; };
+		66A6CEF82925EC760069BF30 /* BuySellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A6CEF72925EC760069BF30 /* BuySellView.swift */; };
 		66CCF58C279224AD00F8B2E8 /* CoinDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CCF58B279224AD00F8B2E8 /* CoinDataService.swift */; };
 		66CCF58F2792306C00F8B2E8 /* NetworkingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CCF58E2792306C00F8B2E8 /* NetworkingManager.swift */; };
 		66CCF59227923F2800F8B2E8 /* CoinImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CCF59127923F2800F8B2E8 /* CoinImageView.swift */; };
@@ -111,6 +112,7 @@
 		669AB7DA278A9E6500873C4B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		669AB7DC278A9E6500873C4B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		669AB7E3278A9ED300873C4B /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		66A6CEF72925EC760069BF30 /* BuySellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuySellView.swift; sourceTree = "<group>"; };
 		66CCF58B279224AD00F8B2E8 /* CoinDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinDataService.swift; sourceTree = "<group>"; };
 		66CCF58E2792306C00F8B2E8 /* NetworkingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingManager.swift; sourceTree = "<group>"; };
 		66CCF59127923F2800F8B2E8 /* CoinImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinImageView.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 				66CCF5992794C4D500F8B2E8 /* SearchBarView.swift */,
 				66CCF59F27950C9C00F8B2E8 /* StatisticsView.swift */,
 				666C0D9D2797863F001DD2B8 /* XmarkButton.swift */,
+				66A6CEF72925EC760069BF30 /* BuySellView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -568,6 +571,7 @@
 				666C0D9C279784B5001DD2B8 /* PortfolioView.swift in Sources */,
 				6680732D27912B0F00E3114A /* Double.swift in Sources */,
 				66CCF5942792407900F8B2E8 /* CoinImageService.swift in Sources */,
+				66A6CEF82925EC760069BF30 /* BuySellView.swift in Sources */,
 				666B3B8627A8C814007E4C96 /* Published.swift in Sources */,
 				6691DDE6279A0D3C00B099D2 /* CoinDetailModel.swift in Sources */,
 				66807327278ECEF400E3114A /* CoinModel.swift in Sources */,
@@ -633,7 +637,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -688,7 +692,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -709,7 +713,7 @@
 				DEVELOPMENT_TEAM = 6SFM579B5E;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = nftApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -733,7 +737,7 @@
 				DEVELOPMENT_TEAM = 6SFM579B5E;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = nftApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

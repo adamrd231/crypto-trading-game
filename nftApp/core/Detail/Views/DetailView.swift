@@ -7,25 +7,13 @@
 
 import SwiftUI
 
-struct DetailLoadingView: View {
-    
-    @Binding var coin: CoinModel?
-
-    var body: some View {
-        ZStack {
-            if let coin = coin {
-                DetailView(coin: coin)
-            }
-        }
-    }
-}
-
 struct DetailView: View {
     
     @StateObject private var vm: DetailViewModel
     @State private var showFullDescription: Bool = false
+    @State var coin: CoinModel
+    @State var userOwnsCoin: Bool
 
-    
     // Grid spacing variable
     private let columns: [GridItem] = [
         GridItem(.flexible()),
@@ -35,36 +23,44 @@ struct DetailView: View {
     // Grid spacing variable
     private let spacing: CGFloat = 30
     
-    init(coin: CoinModel) {
+    init(coin: CoinModel, userOwnsCoin: Bool) {
         _vm = StateObject(wrappedValue: DetailViewModel(coin: coin))
-
+        self.coin = coin
+        self.userOwnsCoin = userOwnsCoin
     }
     
     var body: some View {
         ZStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    ChartView(coin: vm.coin)
-                    // Chart Section
-                    overviewTitle
-                    Divider()
-                    descriptionSection
-                    overviewGrid
-                    additionalTitle
-                    Divider()
-                    additionalGrid
-                    websiteLinks
-                    
+            List {
+                Section(header: Text("Buy / Sell")) {
+                    BuySellView(coin: coin)
                 }
-                .padding()
-                
+                Section(header: Text("Coin Information")) {
+                    VStack(spacing: 20) {
+                        ChartView(coin: vm.coin)
+                        // Chart Section
+                        overviewTitle
+                        Divider()
+                        descriptionSection
+                        overviewGrid
+                        additionalTitle
+                        Divider()
+                        additionalGrid
+                        websiteLinks
+                    }
+                    .padding()
+                }
             }
+            .buttonStyle(BorderedButtonStyle())
         }
         
         .navigationTitle(vm.coin.name)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 navigationbarTrailingItems
+            }
+            ToolbarItem(placement: .navigationBarLeading) {
+                navigationbarLeadingItems
             }
         }
         
@@ -74,7 +70,7 @@ struct DetailView: View {
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
 
-            DetailView(coin: dev.coin)
+            DetailView(coin: dev.coin, userOwnsCoin: true)
         
        
     }
@@ -123,6 +119,18 @@ extension DetailView {
         })
     }
     
+    private var navigationbarLeadingItems: some View {
+        HStack {
+            Image(systemName: "checkmark.circle.fill")
+                .resizable()
+                .foregroundColor(Color.theme.green)
+                .frame(width: 30, height: 30, alignment: .center)
+            Text("OWNED")
+                .font(.callout)
+                .foregroundColor(.gray)
+        }
+    }
+    
     private var navigationbarTrailingItems: some View {
         HStack {
             Text(vm.coin.symbol.uppercased())
@@ -131,6 +139,7 @@ extension DetailView {
             CoinImageView(coin: vm.coin)
                 .frame(width: 25, height: 25)
         }
+        
         
     }
     

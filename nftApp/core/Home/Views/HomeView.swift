@@ -79,10 +79,10 @@ struct HomeView: View {
                     Text("Game")
                 }}
             
-            SettingsView()
+            TradeHistoryView()
                 .tabItem { VStack {
                     Image(systemName: "person")
-                    Text("About")
+                    Text("Trades")
                 }}
    
             
@@ -264,49 +264,17 @@ extension HomeView {
     private var allCoinsList: some View {
         List {
             ForEach(vm.allCoins) { coin in
-                if (vm.portfolioCoins.contains(coin)) {
-                    CoinRowView(coin: coin, userOwnsCoin: true)
-                        .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 0))
-                        .onTapGesture {
-                            selectedCoin = coin
-                            showDetailView.toggle()
-                        }
-                        .sheet(isPresented: $showDetailView) {
-                            if let coin = selectedCoin {
-                                DetailView(coin: coin)
-                            }
-                        }
-                } else {
-                    CoinRowView(coin: coin, userOwnsCoin: false)
-                        .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 0))
-                        .onTapGesture {
-                            selectedCoin = coin
-                            showDetailView.toggle()
-                        }
-                        .sheet(isPresented: $showDetailView) {
-                            if let coin = selectedCoin {
-                                DetailView(coin: coin)
-                            }
-                        }
+                NavigationLink(destination: DetailView(coin: coin, userOwnsCoin: vm.portfolioCoins.contains(coin))) {
+                    if (vm.portfolioCoins.contains(coin)) {
+                        CoinRowView(coin: coin, userOwnsCoin: true)
+                            .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 0))
+                    } else {
+                        CoinRowView(coin: coin, userOwnsCoin: false)
+                            .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 0))
+                    }
                 }
             }
         }
-        .listStyle(PlainListStyle())
-    }
-    
-    private var portfolioCoinsList: some View {
-        List {
-            ForEach(vm.portfolioCoins) { coin in
-                CoinRowView(coin: coin, userOwnsCoin: true)
-                    .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 0))
-                    .onTapGesture {
-                        selectedCoin = coin
-                        showDetailView.toggle()
-                       
-                }
-            }
-        }
-        
         .listStyle(PlainListStyle())
     }
     
