@@ -12,7 +12,7 @@ import GoogleMobileAds
 
 struct HomeView: View {
     
-    @EnvironmentObject var vm: HomeViewModel
+    @StateObject private var vm = HomeViewModel()
     @State private var selectedCoin: CoinModel? = nil
     
     @State var showCircleAnimation: Bool = false
@@ -49,16 +49,12 @@ struct HomeView: View {
                     Image(systemName: "person.crop.circle")
                     Text("Portfolio")
                 }}
-    
                 .tag("one")
             
             // Information on the game
             portfolioView
                 .navigationTitle("")
                 .navigationBarHidden(true)
-//            SettingsView()
-//                .navigationTitle("")
-//                .navigationBarHidden(true)
                 .tabItem { VStack {
                     Image(systemName: "bitcoinsign.circle.fill")
                     Text("Market")
@@ -67,8 +63,6 @@ struct HomeView: View {
                 .onAppear(perform: {
                     selectedTab = "two"
                 })
-            
-            
             
             // Game Options Screen
             NewGameScreen()
@@ -79,13 +73,14 @@ struct HomeView: View {
                     Text("Game")
                 }}
             
-            TradeHistoryView()
+            trades
+                .navigationTitle("")
+                .navigationBarHidden(true)
                 .tabItem { VStack {
                     Image(systemName: "person")
                     Text("Trades")
                 }}
    
-            
             // In App Purchases Screen
             InAppStorePurchasesView(storeManager: vm.storeManager).environmentObject(vm)
                 .navigationTitle("")
@@ -173,6 +168,64 @@ struct PortfolioStatePercentage: View {
 // MARK: Extension to HomeView
 // ----------------------------
 extension HomeView {
+    
+    private var trades: some View {
+        VStack {
+            VStack {
+                HStack {
+                    Text("Total Trades")
+                    Spacer()
+                    Text(vm.allTrades.count.description)
+                }
+                HStack {
+                    Text("Money Spent in Trades")
+                    Spacer()
+                    Text(vm.moneySpent.asCurrencyWith2Decimals())
+                }
+                HStack {
+                    Text("Current Portfolio Value")
+                    Spacer()
+                    Text(vm.portfolioValue.asCurrencyWith2Decimals())
+                }
+                HStack {
+                    Text("Growth / Loss")
+                    Spacer()
+                    Text((((vm.portfolioValue - vm.moneySpent) / vm.moneySpent) * 100).asPercentString())
+                }
+            }
+            .onAppear {
+                print("coins in portfolio: \(vm.portfolioCoins.count)")
+            }
+            .padding()
+            
+            List(vm.allTrades) { trade in
+                VStack {
+                    Text("\(trade.coinName)")
+                    HStack {
+                        Text("Coin Purchased at")
+                        Spacer()
+                        Text("\(trade.priceOfCrypto)")
+                    }
+                    .font(.caption2)
+                    HStack {
+                        Text("Coins Purchased")
+                        Spacer()
+                        Text("\(trade.cryptoCoinAmount)")
+                    }
+                    .font(.caption2)
+                    HStack {
+                        Text("Money Spent")
+                        Spacer()
+                        Text("\(trade.money)")
+                    }
+                    .font(.caption2)
+                }
+            }
+        }
+        .onAppear(perform: {
+            vm.portfolioDataService.getTrades()
+        })
+    }
    
     private var portfolioStatsView: some View {
         ScrollView {
@@ -212,11 +265,14 @@ extension HomeView {
                         spacing: 10,
                         pinnedViews: [],
                         content: {
-                            CoinPortfolioView(coins: vm.allCoins)
+                            CoinPortfolioView(vm: vm)
                     })
                 } else {
                     Text("No Coins... Yet.")
                 }
+            }.onAppear {
+                print("reloading data")
+                vm.portfolioDataService.getPortfolio()
             }
         }
         .padding()

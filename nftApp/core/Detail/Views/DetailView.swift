@@ -10,6 +10,7 @@ import SwiftUI
 struct DetailView: View {
     
     @StateObject private var vm: DetailViewModel
+    @State var homeVM: HomeViewModel = HomeViewModel()
     @State private var showFullDescription: Bool = false
     @State var coin: CoinModel
     @State var userOwnsCoin: Bool
@@ -31,30 +32,39 @@ struct DetailView: View {
     
     var body: some View {
         ZStack {
-            List {
-                Section(header: Text("Buy / Sell")) {
-                    BuySellView(coin: coin)
+            VStack {
+                HStack {
+                    Text(vm.coin.name)
+                    Spacer()
+                    Text("$100,000")
                 }
-                Section(header: Text("Coin Information")) {
-                    VStack(spacing: 20) {
-                        ChartView(coin: vm.coin)
-                        // Chart Section
-                        overviewTitle
-                        Divider()
-                        descriptionSection
-                        overviewGrid
-                        additionalTitle
-                        Divider()
-                        additionalGrid
-                        websiteLinks
+                
+                List {
+                    Section(header: Text("Game Money \(homeVM.storeManager.game.gameDollars.asCurrencyWith2Decimals())")) {
+                        BuySellView(coin: coin)
+                            .environmentObject(vm)
                     }
-                    .padding()
+                    Section(header: Text("Coin Information")) {
+                        VStack(spacing: 20) {
+                            ChartView(coin: vm.coin)
+                            // Chart Section
+                            overviewTitle
+                            Divider()
+                            descriptionSection
+                            overviewGrid
+                            additionalTitle
+                            Divider()
+                            additionalGrid
+                            websiteLinks
+                        }
+                        .padding()
+                    }
                 }
+                .buttonStyle(BorderedButtonStyle())
             }
-            .buttonStyle(BorderedButtonStyle())
         }
-        
-        .navigationTitle(vm.coin.name)
+        .navigationTitle("")
+        .navigationBarHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 navigationbarTrailingItems
@@ -63,7 +73,6 @@ struct DetailView: View {
                 navigationbarLeadingItems
             }
         }
-        
     }
 }
 

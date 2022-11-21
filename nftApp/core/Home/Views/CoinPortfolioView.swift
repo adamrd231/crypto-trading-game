@@ -78,11 +78,10 @@ struct CoinView: View {
 }
 
 struct CoinPortfolioView: View {
-    
-    var coins: [CoinModel]
-    @EnvironmentObject var vm: HomeViewModel
+    @ObservedObject var vm: HomeViewModel
     
     var body: some View {
+        
         ForEach(vm.portfolioCoins) { coin in
             NavigationLink(destination: DetailView(coin: coin, userOwnsCoin: vm.portfolioCoins.contains(coin))) {
                 CoinView(coin: coin)
@@ -93,7 +92,7 @@ struct CoinPortfolioView: View {
 
 struct CoinPortfolioView_Previews: PreviewProvider {
     static var previews: some View {
-        CoinPortfolioView(coins: [])
+        CoinPortfolioView(vm: dev.homeVM)
     }
 }
 

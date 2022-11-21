@@ -16,6 +16,8 @@ class HomeViewModel: ObservableObject {
     @Published var allCoins: [CoinModel] = []
     @Published var portfolioCoins: [CoinModel] = []
     @Published var allTrades: [GameTrade] = []
+    @Published var portfolioValue: Double = 0
+    @Published var moneySpent: Double = 0
     
     // User Statistics model
     @Published var PortfolioStats: [StatisticsModel] = []
@@ -117,8 +119,11 @@ class HomeViewModel: ObservableObject {
         portfolioDataService.$savedTradeEntities
             .map(mapTradesToArray)
             .sink { returnedTrades in
+                print("new trade")
+                print("Trades before: \(self.allTrades.count)")
                 self.allTrades = returnedTrades
-                self.totalSpentInTrades = self.allTrades.map({ $0.money }).reduce(0, +)
+                self.portfolioValue = returnedTrades.map({ $0.cryptoCoinAmount * $0.priceOfCrypto }).reduce(0, +)
+                self.moneySpent = returnedTrades.map({ $0.money }).reduce(0, +)
                 
             }
             .store(in: &cancellables)
@@ -191,13 +196,13 @@ class HomeViewModel: ObservableObject {
     
     private func mapTradesToArray(trades: [TradeEntity]) -> [GameTrade] {
         var createTrades: [GameTrade] = []
-        
+        print("map trades to array")
+        print("mapping trades count: \(trades.count)")
         for trade in trades {
             var addTrade = GameTrade(type: trade.type ?? "", coinName: trade.cryptoName ?? "", priceOfCrypto: trade.priceOfCrypto, dateOfTrade: trade.dateOfTrade ?? Date(), money: trade.money, cryptoCoinAmount: trade.cryptoCoinAmount)
             createTrades.append(addTrade)
         }
         createTrades.sort(by: {$0.dateOfTrade > $1.dateOfTrade})
-        
         return createTrades
     }
     
@@ -212,7 +217,6 @@ class HomeViewModel: ObservableObject {
     
     func updatePortfolio(coin: CoinModel, amount: Double) {
         portfolioDataService.updatePortfolio(coin: coin, amount: amount)
-        
     }
     
     func reloadData() {

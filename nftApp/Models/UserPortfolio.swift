@@ -1,6 +1,6 @@
 import Foundation
 
-struct UserPortfolio: Identifiable {
+class UserPortfolio: Identifiable {
     let id = UUID().uuidString
     let name: String
     var coins: [CoinModel]

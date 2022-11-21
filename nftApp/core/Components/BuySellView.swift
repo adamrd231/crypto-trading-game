@@ -14,6 +14,13 @@ struct BuySellView: View {
     @State var coin: CoinModel
     @State var quantityOfCoinPurchase: Double = 0
     @State var vm = HomeViewModel()
+    
+    // Circle vars
+    @State var startAngle: Double = 0
+    @State var toAngle: Double = 0
+    @State var startProgress: Double = 0
+    @State var toProgress: Double = 0.5
+    
     var purchasePrice: Double {
         return coin.currentPrice * quantityOfCoinPurchase
     }
@@ -21,8 +28,6 @@ struct BuySellView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text("Game Monies")
-            Text(storeManager.game.gameDollars.asCurrencyWith2Decimals())
-            
             Picker("", selection: $pickerChoice) {
                 ForEach(pickerChoices, id: \.self) { choice in
                     Text(choice)
@@ -31,39 +36,66 @@ struct BuySellView: View {
             .pickerStyle(SegmentedPickerStyle())
            
             if (pickerChoice == "BUY") {
-                VStack {
-                    HStack {
-                        Text("Buy")
-                        Spacer()
-                        Text("Cost")
-                    }
-                    HStack {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(lineWidth: 3)
-                                .foregroundColor(Color.theme.secondaryText)
-                                
-                            TextField("\(quantityOfCoinPurchase)", value: $quantityOfCoinPurchase, format: .number)
-                                .padding(5)
-                        }
-               
-                        Spacer()
-                        Text(purchasePrice.asCurrencyWith2Decimals())
-                            .padding(5)
-                            .fixedSize(horizontal: true, vertical: true)
-                    }
-                    
-                    Button("Purchase") {
-                        vm.updateForPurchase(coin: coin, amountSpentPurchasingCrypto: quantityOfCoinPurchase)
-                        print("new trade")
+                GeometryReader { geo in
+                    VStack(alignment: .center) {
+                        let width = geo.size.width
                         
+                        
+                        ZStack {
+                            ZStack {
+                                ForEach(1...60, id: \.self) { index in
+                                    Rectangle()
+                                        .fill(index % 5 == 0 ? .black : .gray)
+                                        .frame(width: 2, height: index % 5 == 0 ? 15 : 5)
+                                        .offset(y: (width) / 2)
+                                        .rotationEffect(.init(degrees: Double(index) * 6))
+                                }
+                            }
+                            
+                            Circle()
+                                .stroke(.black.opacity(0.066), lineWidth: 40)
+                            
+                            Circle()
+                                .trim(from: startProgress, to: toProgress)
+                                .stroke(Color.blue.opacity(0.66), style: StrokeStyle(lineWidth: 40, lineCap: .round, lineJoin: .round, miterLimit: .greatestFiniteMagnitude))
+                                .rotationEffect(.init(degrees: -90))
+                            
+                            Image(systemName: "pencil.circle.fill")
+                                .frame(width: 30, height: 30, alignment: .center)
+                                .foregroundColor(.gray)
+                                .background(.white, in: Circle())
+                                .offset(x: width / 2)
+                                .rotationEffect(.init(degrees: -90))
+                                .rotationEffect(.init(degrees: startAngle))
+                 
+                            
+                            Image(systemName: "pencil.circle.fill")
+                                .frame(width: 30, height: 30, alignment: .center)
+                                .foregroundColor(.blue)
+                                .background(.white, in: Circle())
+                        
+                                .offset(x: width / 2)
+                                .rotationEffect(.init(degrees: 90))
+                                .rotationEffect(.init(degrees: toAngle))
+                            
+                            VStack {
+                                Text("Buy (Number of Coins)")
+                                Text("Cost ($100.00)")
+                            }
+                        }
+                        
+                        Button((pickerChoice == "BUY") ? "Purchase" : "Sell") {
+                            print("new trade")
+                            vm.updateForPurchase(coin: coin, amountSpentPurchasingCrypto: purchasePrice)
+                            vm.portfolioCoins.append(coin)
+                        }
+                        .padding()
+                        .disabled(purchasePrice > storeManager.game.gameDollars)
+                        .foregroundColor(purchasePrice > storeManager.game.gameDollars ? Color.theme.red  : Color.theme.accent)
                     }
-                    .padding()
-                    .disabled(purchasePrice > storeManager.game.gameDollars)
-                    
-                    .foregroundColor(purchasePrice > storeManager.game.gameDollars ? Color.theme.red  : Color.theme.accent)
-                    .frame(width: .infinity)
                 }
+                .frame(height: 400)
+                .padding()
             } else {
                 if coin.currentHoldings == 0 {
                     Text("No Coins Owned")

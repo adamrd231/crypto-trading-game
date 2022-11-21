@@ -25,12 +25,9 @@ struct PortfolioView: View {
     
     @State var selectedIndexForPicker: Int = 0
     var pickerValues:[String] = ["BUY", "SELL"]
-    
-    @State var showTradeHistoryView: Bool = false
     @State var showingPaymentAlert: Bool = false
     
     @State var currentAlert: AlertCases = .purchaseSuccessful
-    
     
     enum AlertCases {
         case purchaseSuccessful
@@ -56,9 +53,6 @@ struct PortfolioView: View {
         return formatter
     }()
     
- 
-   
-    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -67,47 +61,24 @@ struct PortfolioView: View {
                     SearchBarView(searchText: $vm.searchText)
                     coinLogoList
                     
-                    
-                    
                     if let coin = selectedCoin {
                         Picker("buy / sell", selection: $selectedIndexForPicker) {
                             ForEach(0..<pickerValues.count) { index in
                                 Text("\(pickerValues[index])")
                             }
-
                         }
                         .padding(.horizontal)
                         .pickerStyle(SegmentedPickerStyle())
-                        
+        
                         portfolioInputSection
                         .animation(.default)
                         .padding()
                         .font(.headline)
                     }
-             
                 }
                 Spacer()
             }
-            
             .navigationTitle("Buy / Sell Coins")
-            .toolbar(content: {
-                ToolbarItem(placement: .navigationBarLeading) {
-//                    XmarkButton()
-                    Button(action: {
-                        print("Dismissing View")
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
-                        Text("Back")
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    trailingNavBarButtons
-                    
-                }
-            })
-            .sheet(isPresented: $showTradeHistoryView, content: {
-                TradeHistoryView().environmentObject(vm)
-            })
             .alert(isPresented: $showingPaymentAlert, content: {
                 // decide which alert to show
                createAlert()
@@ -118,12 +89,8 @@ struct PortfolioView: View {
                     removeSelectedCoin()
                 }
             })
-            
-   
         }
-
         .navigationBarHidden(true)
-        
     }
 }
 
@@ -446,30 +413,7 @@ extension PortfolioView {
                             .background(Color.theme.background)
                     }
                 }
-                
-                
             }
-            
-            
-     
-            
-            
         }
     }
-    
-    private var trailingNavBarButtons: some View {
-        HStack(spacing: 10) {
-
-            Button(action: {
-                showTradeHistoryView.toggle()
-            }) {
-                Text("Trades")
-            }
-            
-        }
-        .font(.headline)
-    }
-    
-    
-    
 }

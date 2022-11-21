@@ -34,8 +34,9 @@ class PortfolioDataService {
         }
     }
     
-    private func getTrades() {
+    func getTrades() {
         let request = NSFetchRequest<TradeEntity>(entityName: tradeEntityName)
+        
         do {
             savedTradeEntities = try container.viewContext.fetch(request)
         } catch let error {
@@ -50,10 +51,8 @@ class PortfolioDataService {
             let newValue = entity.amount + amount
             // Updating amount
             if newValue > 0 {
-                
                 update(entity: entity, amount: newValue)
             } else {
-                
                 // Deleting amount
                 delete(entity: entity)
             }
@@ -69,32 +68,26 @@ class PortfolioDataService {
         trade.dateOfTrade = Date()
         trade.money = amountOfCryptoSold * coin.currentPrice
         trade.cryptoCoinAmount = amountOfCryptoSold
-        
         trade.priceOfCrypto = coin.currentPrice
-     
-    
         applyChanges()
-        
     }
     
     func saveCryptoCoinPurchase(coin: CoinModel, amountOfMoneySpent: Double) {
-        
         let trade = TradeEntity(context: container.viewContext)
         trade.type = "Purchase"
         trade.cryptoName = coin.name
         trade.dateOfTrade = Date()
         trade.money = amountOfMoneySpent
         trade.priceOfCrypto = coin.currentPrice
-//        trade.cryptoCoinAmount = 42
         trade.cryptoCoinAmount = (1 / coin.currentPrice) * amountOfMoneySpent
-    
+        print("adding coin")
+        add(coin: coin, amount: amountOfMoneySpent)
         applyChanges()
     }
     
     
     // MARK: Private
-    
-    private func getPortfolio() {
+    func getPortfolio() {
         let request = NSFetchRequest<PortfolioEntity>(entityName: entityName)
         do {
             savedEntities = try container.viewContext.fetch(request)
@@ -163,7 +156,7 @@ class PortfolioDataService {
     }
     
     
-    private func applyChanges() {
+    func applyChanges() {
         save()
         getPortfolio()
         getTrades()
