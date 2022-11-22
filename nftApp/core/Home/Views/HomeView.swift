@@ -239,7 +239,6 @@ extension HomeView {
             VStack(alignment: .leading) {
                 PortfolioStatDate(title: "Start Date", date: vm.storeManager.game.startingDate)
                 PortfolioStatDouble(title: "Money", stat: vm.storeManager.game.gameDollars)
-                PortfolioStatDouble(title: "Score", stat: vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +) + vm.storeManager.game.gameDollars)
             }
             Divider()
             VStack(alignment: .leading) {

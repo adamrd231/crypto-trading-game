@@ -33,14 +33,8 @@ struct DetailView: View {
     var body: some View {
         ZStack {
             VStack {
-                HStack {
-                    Text(vm.coin.name)
-                    Spacer()
-                    Text("$100,000")
-                }
-                
                 List {
-                    Section(header: Text("Game Money \(homeVM.storeManager.game.gameDollars.asCurrencyWith2Decimals())")) {
+                    Section(header: Text("Buy or Sell Coins")) {
                         BuySellView(coin: coin)
                             .environmentObject(vm)
                     }
@@ -63,8 +57,7 @@ struct DetailView: View {
                 .buttonStyle(BorderedButtonStyle())
             }
         }
-        .navigationTitle("")
-        .navigationBarHidden(true)
+        .navigationTitle("\(coin.name)")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 navigationbarTrailingItems
@@ -142,7 +135,7 @@ extension DetailView {
     
     private var navigationbarTrailingItems: some View {
         HStack {
-            Text(vm.coin.symbol.uppercased())
+            Text("Rank: \(vm.coin.rank)")
                 .font(.headline)
                 .foregroundColor(Color.theme.secondaryText)
             CoinImageView(coin: vm.coin)
