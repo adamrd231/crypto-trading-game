@@ -10,9 +10,7 @@ import GameKit
 
 struct NewGameScreen: View {
     
-    @EnvironmentObject var vm: HomeViewModel
-
-    
+    @State var vm = HomeViewModel()
     @StateObject var leaderboardVM = BoardModel()
     
     @State var showingAlert: Bool = false

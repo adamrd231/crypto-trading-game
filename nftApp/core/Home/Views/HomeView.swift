@@ -47,12 +47,12 @@ struct HomeView: View {
                 .navigationTitle("")
                 .tabItem { VStack {
                     Image(systemName: "person.crop.circle")
-                    Text("Portfolio")
+                    Text(vm.portfolioCoins.count > 0 ? "Portfolio" : "Welcome")
                 }}
                 .tag("one")
             
             // Information on the game
-            portfolioView
+            cryptoCoinList
                 .navigationTitle("")
                 .navigationBarHidden(true)
                 .tabItem { VStack {
@@ -229,55 +229,76 @@ extension HomeView {
    
     private var portfolioStatsView: some View {
         ScrollView {
-            HStack {
-                Text("Portfolio")
-                    .font(.title)
-                    .fontWeight(.bold)
-                Spacer()
-            }
-           
-            VStack(alignment: .leading) {
-                PortfolioStatDate(title: "Start Date", date: vm.storeManager.game.startingDate)
-                PortfolioStatDouble(title: "Money", stat: vm.storeManager.game.gameDollars)
-            }
-            Divider()
-            VStack(alignment: .leading) {
-                PortfolioStatNumber(title: "Unique Coins", value: Double(vm.portfolioCoins.count))
-                PortfolioStatNumber(title: "Total Coins", value: vm.portfolioCoins.map({ $0.currentHoldings ?? 0 }).reduce(0,+))
-                PortfolioStatDouble(title: "Total Coin Value", stat: vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +))
-            }
-            Divider()
-            VStack(alignment: .leading) {
-                PortfolioStatePercentage(title: "Daily Change", value: vm.Portfolio24Change)
-            }
-            
-            Divider()
-            VStack(alignment: .leading) {
-                Text("Owned Coins")
-                    .font(.title)
-                    .fontWeight(.bold)
-                
-                if vm.allCoins.count > 0 {
-                    LazyVGrid(
-                        columns: columns,
-                        alignment: .center,
-                        spacing: 10,
-                        pinnedViews: [],
-                        content: {
-                            CoinPortfolioView(vm: vm)
-                    })
-                } else {
-                    Text("No Coins... Yet.")
+            if vm.portfolioCoins.count > 0 {
+                HStack {
+                    Text("Portfolio")
+                        .font(.title)
+                        .fontWeight(.bold)
+                    Spacer()
                 }
-            }.onAppear {
-                print("reloading data")
-                vm.portfolioDataService.getPortfolio()
+               
+                VStack(alignment: .leading) {
+                    PortfolioStatDate(title: "Start Date", date: vm.storeManager.game.startingDate)
+                    PortfolioStatDouble(title: "Money", stat: vm.storeManager.game.gameDollars)
+                }
+                Divider()
+                VStack(alignment: .leading) {
+                    PortfolioStatNumber(title: "Unique Coins", value: Double(vm.portfolioCoins.count))
+                    PortfolioStatNumber(title: "Total Coins", value: vm.portfolioCoins.map({ $0.currentHoldings ?? 0 }).reduce(0,+))
+                    PortfolioStatDouble(title: "Total Coin Value", stat: vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +))
+                }
+                Divider()
+                VStack(alignment: .leading) {
+                    PortfolioStatePercentage(title: "Daily Change", value: vm.Portfolio24Change)
+                }
+                
+                Divider()
+                VStack(alignment: .leading) {
+                    Text("Owned Coins")
+                        .font(.title)
+                        .fontWeight(.bold)
+                    
+                    if vm.allCoins.count > 0 {
+                        LazyVGrid(
+                            columns: columns,
+                            alignment: .center,
+                            spacing: 10,
+                            pinnedViews: [],
+                            content: {
+                                CoinPortfolioView(vm: vm)
+                        })
+                    } else {
+                        welcomeScreen
+                    }
+                }
+                .onAppear {
+                    vm.portfolioDataService.getPortfolio()
+                }
+                
+            } else {
+                welcomeScreen
             }
         }
-        .padding()
     }
     
-    private var portfolioView: some View {
+    private var welcomeScreen: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            Text("Crypto Stand")
+                .font(.largeTitle)
+                .fontWeight(.heavy)
+            ForEach(vm.FAQs, id: \.title) { item in
+                VStack(alignment: .leading) {
+                    Text(item.title)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                    Text(item.body)
+                }
+            }
+        }
+        .frame(width: UIScreen.main.bounds.width * 0.8)
+    }
+    
+    private var cryptoCoinList: some View {
         ZStack {
             Color.theme.background
                 .ignoresSafeArea()
@@ -333,49 +354,6 @@ extension HomeView {
         .listStyle(PlainListStyle())
     }
     
-    private var columnTitles: some View {
-        HStack {
-            HStack(spacing: 4) {
-                Text("Coin")
-                Image(systemName: "chevron.down")
-                    .opacity((vm.sortOption == .rank || vm.sortOption == .rankReversed) ? 1.0 : 0.0)
-                    .rotationEffect(Angle(degrees: vm.sortOption == .rank ? 0 : 180))
-            }
-            .onTapGesture {
-                withAnimation(.default) {
-                    vm.sortOption = vm.sortOption == .rank ? .rankReversed : .rank
-                }
-            }
-            
-            Spacer()
-            
-            HStack(spacing: 4) {
-                Text("Price")
-                Image(systemName: "chevron.down")
-                    .opacity((vm.sortOption == .price || vm.sortOption == .priceReversed) ? 1.0 : 0.0)
-                    .rotationEffect(Angle(degrees: vm.sortOption == .price ? 0 : 180))
-            }
-            .onTapGesture {
-                withAnimation(.default) {
-                    vm.sortOption = vm.sortOption == .price ? .priceReversed : .price
-                }
-            }
-            .frame(width: UIScreen.main.bounds.width / 3.5, alignment: .trailing)
-            
-            
-            Button(action: {
-                withAnimation(.linear(duration: 2.0)) {
-                    vm.reloadData()
-                }
-            }, label: {
-                Image(systemName: "goforward")
-            })
-            .rotationEffect(Angle(degrees: vm.isLoading ? 360 : 0), anchor: .center)
-        }
-        .font(.caption)
-        .foregroundColor(Color.theme.secondaryText)
-        .padding(.horizontal)
-    }
     
     private var columnTitlesSecondary: some View {
         HStack(spacing: 40) {

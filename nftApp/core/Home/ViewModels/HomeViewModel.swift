@@ -106,10 +106,8 @@ class HomeViewModel: ObservableObject {
         marketDataService.$marketData
             .combineLatest($portfolioCoins, storeManager.game.$gameDollars)
             .map(mapGlobalMarketData)
-            .sink { [weak self] (returnedStats) in
-                self?.statistics = returnedStats.0
-                self?.secondRowStatistics = returnedStats.1
-                self?.Portfolio24Change = returnedStats.2
+            .sink { [weak self] (portfolio24Change) in
+                self?.Portfolio24Change = portfolio24Change
                 self?.isLoading = false
             }
             .store(in: &cancellables)
@@ -127,71 +125,14 @@ class HomeViewModel: ObservableObject {
                 
             }
             .store(in: &cancellables)
-
     }
     
-    private func mapGlobalMarketData(marketDataModel: MarketDataModel?, portfolioCoins: [CoinModel], gameDollars: Double) -> ([StatisticsModel], [StatisticsModel], Double) {
-        var stats: [StatisticsModel] = []
-        var secondStats: [StatisticsModel] = []
-        
-        guard let data = marketDataModel else { return (stats, secondStats, 0) }
-        
-        let marketCap = StatisticsModel(title: "Market Cap", value: data.marketCap, percentageChanged: data.marketCapChangePercentage24HUsd)
-        let volume = StatisticsModel(title: "24h Volume", value: data.volume)
-        let bitcoinDominance = StatisticsModel(title: "BTC Share", value: data.bitDominance)
-        
-        let portfolioValue =
-            portfolioCoins
-                .map({ $0.currentHoldingsValue })
-                .reduce(0, +)
-        
-        let previousValue =
-            portfolioCoins
-                .map{ (coin) -> Double in
-                    let currentValue = coin.currentHoldingsValue
-                    let percentChange = (coin.priceChangePercentage24H ?? 0) * 0.01
-                    let previousValue = currentValue / (percentChange + 1)
-                    return previousValue
-                }
-                .reduce(0, +)
-
-        
-        let percentageChange = ((portfolioValue - previousValue) / previousValue) * 100
-        
-        let portfolio = StatisticsModel(
-            title: "Crypto Holdings",
-            value: portfolioValue.asCurrencyWith2Decimals(),
-            percentageChanged: percentageChange
-        )
-        
-        let startingDate = storeManager.game.startingDate
-        let startingDateStat = StatisticsModel(title: "Start Date", value: startingDate.asShortDateString())
-        let numberOfTrades = allTrades.count
-        let numberOfTradesStat = StatisticsModel(title: "# of Trades", value: numberOfTrades.description)
-        let totalUSDMoney:Double = gameDollars
-        let totalUSDMoneyStat = StatisticsModel(title: "Game Monies", value: totalUSDMoney.asCurrencyWith2Decimals())
-        let totalMoneyOverall = portfolioValue + totalUSDMoney
-        let totalMoneyOverallStat = StatisticsModel(title: "Total Score", value: totalMoneyOverall.asCurrencyWith2Decimals())
-        
-        secondStats.append(contentsOf: [
-            marketCap,
-            startingDateStat,
-            numberOfTradesStat,
-            
-        ])
-        
-        stats.append(contentsOf: [
-            
-            totalUSDMoneyStat,
-            portfolio,
-            totalMoneyOverallStat
-
-        ])
+    private func mapGlobalMarketData(marketDataModel: MarketDataModel?, portfolioCoins: [CoinModel], gameDollars: Double) -> (Double) {
         // selling price substracted from intial purchase price
         let startingPrice = portfolioCoins.map({ $0.currentHoldingsValue }).reduce(0,+)
         let purchasePrice = allTrades.map({ $0.priceOfCrypto * $0.cryptoCoinAmount }).reduce(0,+)
         var portfolio24HourChange = ((startingPrice - purchasePrice) / startingPrice) * 100
-        return (stats, secondStats, portfolio24HourChange)
+        return (portfolio24HourChange)
     }
     
     private func mapTradesToArray(trades: [TradeEntity]) -> [GameTrade] {
@@ -225,7 +166,6 @@ class HomeViewModel: ObservableObject {
         marketDataService.getData()
         HapticManager.notification(type: .success)
     }
-    
 
     private func mapAllCoinsToPortfolioCoins(allCoins: [CoinModel], portfolioEntities: [PortfolioEntity]) -> [CoinModel] {
         allCoins
@@ -234,8 +174,6 @@ class HomeViewModel: ObservableObject {
                 return coin.updateHoldings(amount: entity.amount)
             }
     }
-    
-
     
     private func filterAndSortcoins(text: String, coins: [CoinModel], sort: SortOption) -> [CoinModel] {
         var updatedCoins = filterCoins(text: text, coins: coins)
@@ -266,20 +204,27 @@ class HomeViewModel: ObservableObject {
         default:
             return coins
         }
-        
-        
     }
     
     private func filterCoins(text: String, coins: [CoinModel]) -> [CoinModel] {
         guard !text.isEmpty else { return coins }
-        
         let lowercasedText = text.lowercased()
-        
         return coins.filter { (coin) -> Bool in
             return coin.name.lowercased().contains(lowercasedText) || coin.symbol.lowercased().contains(lowercasedText) || coin.id.lowercased().contains(lowercasedText)
         }
-        
     }
     
-    
+    var FAQs: [FAQ] = [
+        FAQ(title: "Finding Crypto Coins", body: "Head over the the market tab, once you buy your first crypto coin, this screen will show your portfolio."),
+        FAQ(title: "Game Monies", body: "You start with $100,000 game monies, use them wisely! You can sell coins to get game monies or buy more via in-app purchases."),
+        FAQ(title: "How to Play", body: "Buy coins low, sell coins high! The goal is to get your portfolio value to grow as much as possible!"),
+        FAQ(title: "Crypto Market", body: "This game is built with an API from CoinGecko, the API is called every time you log-in, refresh or coins will update every 10-15 minutes."),
+        FAQ(title: "Real-Time Pricing", body: "All coins prices are for real life the right price (maybe 5-10 mins behind)."),
+        FAQ(title: "More Questions", body: "Send feedback, questions and comments to info@rdconcepts.design Send feedback, questions and comments to info@rdconcepts.design")
+    ]
+}
+
+struct FAQ: Hashable {
+    var title: String
+    var body: String
 }

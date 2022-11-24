@@ -16,30 +16,29 @@ struct InAppStorePurchasesView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            VStack {
-                Text("In-App Purchases")
-                    .font(.title)
-                    .foregroundColor(Color.theme.secondaryText)
-                storeProductsList
-                    .padding(.top)
+            menuButtons
+            ScrollView {
+                
+                VStack(alignment: .leading) {
+                    Text("App Add On's")
+                        .font(.title)
+                        .fontWeight(.heavy)
+                    Text("Remove advertising or purchase in-game currency.")
+                        .fixedSize(horizontal: false, vertical: true)
+                        .font(.callout)
+                        .foregroundColor(Color.theme.secondaryText)
+  
+                    Divider()
+                    storeProductsList
+                    consumableProductsList
+                        .onAppear(perform: {
+                            storeManager.myConsumableProducts.sort(by: { $0.price.intValue < $1.price.intValue })
+                        })
+                }
             }
             .padding(.horizontal)
-            
-            VStack {
-                Text("App Add On's")
-                Text("Purchase additional in-game currency.")
-                    .fixedSize(horizontal: false, vertical: true)
-                    .font(.caption)
-                    .foregroundColor(Color.theme.secondaryText)
-                consumableProductsList
-            }
-            .padding(.top)
-            
-            menuButtons
-            
+            .navigationBarHidden(true)
         }
-        .navigationBarHidden(true)
-        .padding()
     }
 }
 
@@ -70,6 +69,7 @@ extension InAppStorePurchasesView {
                 Text("Restore Purchases").foregroundColor(.primary)
             }
         }
+        .padding(.horizontal)
     }
     
     var storeProductsList: some View {
@@ -77,79 +77,60 @@ extension InAppStorePurchasesView {
 
         ForEach(self.storeManager.myProducts, id: \.price) { product in
 
-            VStack(alignment: .center) {
-                Text("\(product.localizedTitle)")
-                Text("\(product.localizedDescription)").fixedSize(horizontal: false, vertical: true)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .font(.caption)
-                    .foregroundColor(Color.theme.secondaryText)
+            HStack(alignment: .center, spacing: 5) {
+                Image(systemName: "nosign")
+                    .frame(width: 50, height: 50, alignment: .center)
+                
+                VStack(alignment: .leading) {
+                    Text("\(product.localizedTitle)")
+                    Text("\(product.localizedDescription)")
+                        .fixedSize(horizontal: false, vertical: true)
+                        .font(.caption)
+                        .foregroundColor(Color.theme.secondaryText)
+                }
+               Spacer()
+                Button( action: {
+                    storeManager.purchaseProduct(product: product)
+                }) {
+                    Text((storeManager.purchasedRemoveAds == true) ? "" : product.price.description)
+                        .font(.callout)
+                        .bold()
+                        .padding()
+                        .foregroundColor(Color.theme.blue)
+                }
+               
+                .opacity(storeManager.purchasedRemoveAds == true ? 1.0 : 0.8)
+                .disabled(storeManager.purchasedRemoveAds == true)
+            }
+        }
+    }
+    
+    var consumableProductsList: some View {
+        ForEach(self.storeManager.myConsumableProducts, id: \.self) { product in
+            HStack {
+                Image("coins")
+                    .resizable()
+                    .frame(width: 50, height: 50, alignment: .center)
+                VStack(alignment: .leading) {
+                    Text("\(product.localizedTitle)")
+                    Text("\(product.localizedDescription)")
+                        .fixedSize(horizontal: false, vertical: true)
+                        .font(.caption)
+                        .foregroundColor(Color.theme.secondaryText)
+                }
+                Spacer()
                 
                 Button( action: {
                     storeManager.purchaseProduct(product: product)
                 }) {
-                    VStack {
-                        ZStack {
-                            Rectangle()
-                                .foregroundColor(Color.theme.background)
-                                .cornerRadius(15.0)
-                                .frame(height: 66)
-                            HStack {
-                                Text((storeManager.purchasedRemoveAds == true) ? "Purchased" : "Purchase")
-                                    .bold()
-                                    .padding()
-                                    .foregroundColor(Color.theme.secondaryText)
-                                Spacer()
-                                Text("$\(product.price)").font(.caption)
-                            }
-                            .padding(.horizontal)
-                        }
-                    }
-                }
-                .opacity(storeManager.purchasedRemoveAds == true ? 1.0 : 0.8)
-                .disabled(storeManager.purchasedRemoveAds == true)
-            }.onAppear(perform: {
-                storeManager.myConsumableProducts.sort(by: { $0.price.intValue < $1.price.intValue })
-            })
-        }
-            
-            
-        
-        
-        
-    }
-    
-    var consumableProductsList: some View {
-        List {
-            ForEach(self.storeManager.myConsumableProducts, id: \.self) { product in
-                VStack(alignment: .leading) {
-                    Button( action: {
-                        // Purchase Product
-                        storeManager.purchaseProduct(product: product)
-       
-                    }) {
-                        VStack {
-                            ZStack {
-                                Rectangle()
-                                    .foregroundColor(Color.theme.background)
-                                    .cornerRadius(15.0)
-                                    .frame(height: 66)
-                                HStack {
-                                    Text("\(product.localizedTitle)")
-                                        .bold()
-                                        .foregroundColor(Color.theme.secondaryText)
-                                    
-                                    Spacer()
-                                    Text("$\(product.price)").font(.caption)
-                                }
-                                .padding(.horizontal)
-                            }
-                            
-                        }
-                    }
+                    Text("$\(product.price.description)")
+                        .font(.callout)
+                        .bold()
+                        .padding()
+                        .foregroundColor(Color.theme.blue)
                 }
             }
         }
-        
     }
     
     var explanationBlurb: some View {

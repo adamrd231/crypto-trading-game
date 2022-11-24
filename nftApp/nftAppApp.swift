@@ -10,7 +10,6 @@ import AppTrackingTransparency
 
 @main
 struct nftAppApp: App {
-    @State private var showLaunchView:Bool = true
     private func requestIDFA() {
       ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in
       })
@@ -18,20 +17,10 @@ struct nftAppApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                NavigationView {
-                    HomeView()
-                }
-                .navigationViewStyle(StackNavigationViewStyle())
-                
-                ZStack {
-                    if showLaunchView {
-                        LaunchView(showLaunchView: $showLaunchView)
-                            .transition(.move(edge: .leading))
-                    }
-                }
-                .zIndex(2.0)
+            NavigationView {
+                HomeView()
             }
+            .navigationViewStyle(StackNavigationViewStyle())
             .onAppear(perform: {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     requestIDFA()
