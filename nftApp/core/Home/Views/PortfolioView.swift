@@ -1,10 +1,3 @@
-//
-//  PortfolioView.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/18/22.
-//
-
 import SwiftUI
 
 struct PortfolioView: View {

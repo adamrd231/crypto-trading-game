@@ -1,10 +1,3 @@
-//
-//  WelcomeScreen.swift
-//  nftApp
-//
-//  Created by Adam Reed on 12/29/22.
-//
-
 import SwiftUI
 
 struct WelcomeScreen: View {

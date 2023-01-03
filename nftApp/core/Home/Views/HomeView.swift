@@ -1,9 +1,3 @@
-//
-//  HomeView.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/11/22.
-//
 import SwiftUI
 import GoogleMobileAds
 
@@ -11,13 +5,9 @@ struct HomeView: View {
     
     @StateObject private var vm = HomeViewModel()
     @State private var selectedCoin: CoinModel? = nil
-    
     @State var showCircleAnimation: Bool = false
-    
     @State var showPortfolioView: Bool = false
-    
     @State var showWelcomeScreen: Bool = false
-    
     @State private var selectedTab = "one"
 
     // Sheet Navigation
@@ -27,7 +17,6 @@ struct HomeView: View {
     private let columns: [GridItem] = [
         GridItem(.flexible()),
         GridItem(.flexible()),
-        
     ]
     
     // Grid spacing variable
@@ -117,7 +106,6 @@ struct PortfolioStatDouble: View {
         HStack(alignment: .center) {
             Text(title)
                 .font(.title)
-                .fontWeight(.bold)
             Spacer()
             Text(stat.asCurrencyWith2Decimals())
                 .font(.title)
@@ -132,7 +120,6 @@ struct PortfolioStatNumber: View {
         HStack(alignment: .center) {
             Text(title)
                 .font(.title)
-                .fontWeight(.bold)
             Spacer()
             Text(String(format: "%.2f", value))
                 .font(.title)
@@ -148,7 +135,6 @@ struct PortfolioStatDate: View {
         HStack(alignment: .center) {
             Text(title)
                 .font(.title)
-                .fontWeight(.bold)
             Spacer()
             Text(date.asShortDateString())
                 .font(.title)
@@ -163,7 +149,6 @@ struct PortfolioStatePercentage: View {
         HStack(alignment: .center) {
             Text(title)
                 .font(.title)
-                .fontWeight(.bold)
             Spacer()
             Text(value.asPercentString())
                 .foregroundColor(value > 0 ? .green : .red)
@@ -236,47 +221,45 @@ extension HomeView {
     private var portfolioStatsView: some View {
         VStack {
             // Header
-            HStack {
-                HStack(spacing: 5) {
-                    Text("Crypto Stand")
-                        .fontWeight(.bold)
-                    Text("V\(Bundle.main.releaseVersionNumber ?? "V1.0")")
-                        .fontWeight(.bold)
+            VStack {
+                HStack {
+                    HStack(spacing: 5) {
+                        Text("Crypto Stand")
+                            .fontWeight(.bold)
+                        Text("V\(Bundle.main.releaseVersionNumber ?? "V1.0")")
+                            .fontWeight(.bold)
+                    }
+                    Spacer()
+                    Button {
+                        showWelcomeScreen = true
+                    } label: {
+                        Text("?")
+                            .fontWeight(.heavy)
+                    }
                 }
-                Spacer()
-                Button {
-                    showWelcomeScreen = true
-                } label: {
-                    Text("?")
-                        .fontWeight(.heavy)
+                .padding(.vertical)
+                .font(.callout)
+                .foregroundColor(Color.gray)
+                
+                VStack(spacing: 10) {
+                    PortfolioStatDouble(title: "Money", stat: vm.storeManager.game.gameDollars)
+                    PortfolioStatePercentage(title: "Daily Change", value: vm.Portfolio24Change)
                 }
             }
-            .padding(.vertical)
-            .font(.callout)
-            .foregroundColor(Color.gray)
+            .background(Color.theme.blue)
             
-            VStack(spacing: 10) {
-                PortfolioStatDouble(title: "Money", stat: vm.storeManager.game.gameDollars)
-                PortfolioStatePercentage(title: "Daily Change", value: vm.Portfolio24Change)
-            }
             
             // Coins Portfolio
             ScrollView {
-                VStack(alignment: .leading) {
-                    Text("Crypto Portfolio")
-                        .font(.title)
-                        .fontWeight(.bold)
-                    
-                    if vm.allCoins.count > 0 {
-                        LazyVGrid(
-                            columns: columns,
-                            alignment: .center,
-                            spacing: 10,
-                            pinnedViews: [],
-                            content: {
-                                CoinPortfolioView(vm: vm)
-                        })
-                    }
+                if vm.allCoins.count > 0 {
+                    LazyVGrid(
+                        columns: columns,
+                        alignment: .center,
+                        spacing: 10,
+                        pinnedViews: [],
+                        content: {
+                            CoinPortfolioView(vm: vm)
+                    })
                 }
             }
         }
@@ -387,7 +370,4 @@ extension HomeView {
         .padding(.horizontal)
         
     }
-    
-
 }
-

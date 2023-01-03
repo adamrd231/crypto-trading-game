@@ -1,51 +1,8 @@
-//
-//  CoinModel.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/12/22.
-//
-
 // API Info
 /*
  URL:
     https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true
- 
-JSON:
- "id": "ripple",
-  "symbol": "xrp",
-  "name": "XRP",
-  "image": "https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png?1605778731",
-  "current_price": 0.769158,
-  "market_cap": 36646101497,
-  "market_cap_rank": 8,
-  "fully_diluted_valuation": 76963150922,
-  "total_volume": 2123902848,
-  "high_24h": 0.802947,
-  "low_24h": 0.762514,
-  "price_change_24h": -0.03227013521,
-  "price_change_percentage_24h": -4.02658,
-  "market_cap_change_24h": -1473623705.8579407,
-  "market_cap_change_percentage_24h": -3.86578,
-  "circulating_supply": 47615126275,
-  "total_supply": 100000000000,
-  "max_supply": 100000000000,
-  "ath": 3.4,
-  "ath_change_percentage": -77.35345,
-  "ath_date": "2018-01-07T00:00:00.000Z",
-  "atl": 0.00268621,
-  "atl_change_percentage": 28551.23969,
-  "atl_date": "2014-05-22T00:00:00.000Z",
-  "roi": null,
-  "last_updated": "2022-01-13T23:22:52.893Z",
-  "sparkline_in_7d": {
-    "price": [
-        0.7712780142472386,
-        0.7766712206703662,
-    ]
- }
- 
- 
- */
+*/
 
 import Foundation
 
@@ -54,7 +11,6 @@ struct CoinModel: Identifiable, Codable, Equatable {
     static func == (lhs: CoinModel, rhs: CoinModel) -> Bool {
         return lhs.id == rhs.id
     }
-    
     
     let id, symbol, name: String
     let image: String
@@ -96,7 +52,6 @@ struct CoinModel: Identifiable, Codable, Equatable {
         case atl = "atl"
         case atlChangePercentage = "atl_change_percentage"
         case atlDate = "atl_date"
-        
         case lastUpdated = "last_updated"
         case sparklinein7D = "sparkline_in_7d"
         case priceChangePercentage24HInCurrency = "price_change_percentage_24h_in_currency"
@@ -134,7 +89,6 @@ struct CoinModel: Identifiable, Codable, Equatable {
             sparklinein7D: sparklinein7D,
             priceChangePercentage24HInCurrency: priceChangePercentage24HInCurrency,
             currentHoldings: amount
-            
         )
     }
     
@@ -145,7 +99,6 @@ struct CoinModel: Identifiable, Codable, Equatable {
     var rank: Int {
         return Int(marketCapRank ?? 0)
     }
-    
 }
 
 struct SparklineIn7D: Codable {

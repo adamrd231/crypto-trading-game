@@ -1,10 +1,3 @@
-//
-//  CoinDetailDataService.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/20/22.
-//
-
 import Foundation
 import Combine
 

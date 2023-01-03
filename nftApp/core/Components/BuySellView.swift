@@ -1,10 +1,3 @@
-//
-//  BuySellView.swift
-//  nftApp
-//
-//  Created by Adam Reed on 11/16/22.
-//
-
 import SwiftUI
 
 struct BuySellView: View {
@@ -26,7 +19,6 @@ struct BuySellView: View {
     @State var amountOfCoinsToPurchase: Double = 0
     @State var moneySpentOnPurchase: Double = 0
     
-
     var purchasePrice: Double {
         return coin.currentPrice * quantityOfCoinPurchase
     }
@@ -149,9 +141,6 @@ struct BuySellView: View {
             self.moneySpentOnPurchase = vm.storeManager.game.gameDollars
             self.amountOfCoinsToPurchase = self.moneySpentOnPurchase / coin.currentPrice
         }
- 
-       
-        
     }
 }
 

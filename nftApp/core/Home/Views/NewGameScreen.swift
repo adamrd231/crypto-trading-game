@@ -1,10 +1,3 @@
-//
-//  NewGameScreen.swift
-//  nftApp
-//
-//  Created by Adam Reed on 2/1/22.
-//
-
 import SwiftUI
 import GameKit
 
@@ -74,7 +67,7 @@ struct NewGameScreen: View {
                 }
 
                 Button(action: {
-//                        vm.game = GameModel()
+//                    vm.game = GameModel()
                     showingAlert.toggle()
                     
                 }) {

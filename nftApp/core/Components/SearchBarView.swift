@@ -1,10 +1,3 @@
-//
-//  SearchBarView.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/16/22.
-//
-
 import SwiftUI
 
 struct SearchBarView: View {

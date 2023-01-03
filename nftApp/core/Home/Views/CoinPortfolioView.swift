@@ -1,10 +1,3 @@
-//
-//  CoinPortfolioView.swift
-//  nftApp
-//
-//  Created by Adam Reed on 11/15/22.
-//
-
 import SwiftUI
 
 struct CoinStat: View {

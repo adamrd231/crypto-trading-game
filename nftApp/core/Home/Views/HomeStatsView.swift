@@ -1,14 +1,6 @@
-//
-//  HomeStatsView.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/18/22.
-//
-
 import SwiftUI
 
 struct HomeStatsView: View {
-    
     var statistics: [StatisticsModel]
     
     var body: some View {

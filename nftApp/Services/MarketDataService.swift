@@ -1,10 +1,3 @@
-//
-//  MarketDataService.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/18/22.
-//
-
 import Foundation
 import Combine
 

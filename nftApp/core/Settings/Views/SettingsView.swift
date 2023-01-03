@@ -1,10 +1,3 @@
-//
-//  SettingsView.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/20/22.
-//
-
 import SwiftUI
 
 struct SettingsView: View {
@@ -92,18 +85,13 @@ extension SettingsView {
     private var settingsSection: some View {
         Section(header: Text("About me")) {
             HStack {
-                
                 Image("adam")
                     .resizable()
                     .frame(width: 100, height: 100)
-     
                     .clipShape(RoundedRectangle(cornerRadius: 25.0))
-                
             }
             
-                
             VStack(alignment: .leading, spacing: 10) {
-
                 Text("Adam Reed").fontWeight(.bold)
                 Text("Developer")
                 Text("This App was made with inspiration from @SwiftfulThinking course on Youtube and utilizing CoinGecko's API for cryptocurrency pricing and information. It uses MVVM architecture, Combine and CoreData. The app was expanded upon by making it into a free to use crptyo trading game.")
@@ -129,7 +117,6 @@ extension SettingsView {
                 Link("Github", destination: githubURL)
 
             }
-            
         }
     }
     
@@ -140,21 +127,15 @@ extension SettingsView {
                 .frame(width: 100, height: 100)
                 .clipShape(RoundedRectangle(cornerRadius: 50.0))
 
-                
             VStack(alignment: .leading, spacing: 10) {
-                
                 Text("The cryptocurrency data that is used in this app comes from a free API from CoinGecko! Prices may be slightly delayed.")
-
             }
             
             if let coinGeckoURL = coinGeckoURL {
                 Link("Visit CoinGecko", destination: coinGeckoURL)
-
             }
-            
         }
     }
-    
     
     private var developerSection: some View {
         Section(header: Text("Developer Tools")) {
@@ -162,29 +143,19 @@ extension SettingsView {
                 .resizable()
                 .frame(width: 100, height: 100)
         
-                
             VStack(alignment: .leading, spacing: 10) {
-                
                 Text("This app was developed by Adam Reed. It uses SwiftUI and is written completely in swift. This project was intended to dive into and get more familiar with multi-threading, publishers and subscribers, as well as data persistence.")
-                    
-
-
             }
-            
             if let websiteURL = portfolioURL {
                 Link("My personal website", destination: websiteURL)
 
             }
-            
         }
     }
-    
     
     private var privacyPolicy: some View {
         Section(header: Text("Privacy Policy")) {
             Link("Privacy Policy", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
-            
         }
     }
-    
 }

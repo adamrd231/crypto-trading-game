@@ -1,10 +1,3 @@
-//
-//  GameBoardModel.swift
-//  nftApp
-//
-//  Created by Adam Reed on 2/17/22.
-//
-
 import Foundation
 import GameKit
 import UIKit
@@ -28,7 +21,6 @@ class BoardModel: ObservableObject {
     }
     
     func load() {
-        print("Board is: \(board)")
         if nil == board {
             GKLeaderboard.loadLeaderboards(IDs: ["cryptoStandTopScoreLeaderBoard"]) { [weak self] (boards, error) in
                 self?.board = boards?.first
@@ -40,8 +32,7 @@ class BoardModel: ObservableObject {
     }
     
     func addScoreToLeaderBoard(score: Double) {
-        print("submit score \(Int(score))")
-        
+
         GKLeaderboard.submitScore(Int(score), context: 0, player: GKLocalPlayer.local, leaderboardIDs: ["cryptoStandTopScoreLeaderBoard"]) { error in
             print("error \(error)")
         }

@@ -41,7 +41,6 @@
 		6691DE01279B7B7E00B099D2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6691DE00279B7B7E00B099D2 /* LaunchScreen.storyboard */; };
 		6691DE03279B7F9A00B099D2 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6691DE02279B7F9A00B099D2 /* LaunchView.swift */; };
 		6691DE0B279E35C400B099D2 /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6691DE0A279E35C400B099D2 /* GameModel.swift */; };
-		6691DE0D27A2624E00B099D2 /* GameDataSevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6691DE0C27A2624E00B099D2 /* GameDataSevice.swift */; };
 		669AB7D4278A9E6300873C4B /* nftAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669AB7D3278A9E6300873C4B /* nftAppApp.swift */; };
 		669AB7D8278A9E6500873C4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 669AB7D7278A9E6500873C4B /* Assets.xcassets */; };
 		669AB7DB278A9E6500873C4B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 669AB7DA278A9E6500873C4B /* Preview Assets.xcassets */; };
@@ -102,7 +101,6 @@
 		6691DE00279B7B7E00B099D2 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6691DE02279B7F9A00B099D2 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		6691DE0A279E35C400B099D2 /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
-		6691DE0C27A2624E00B099D2 /* GameDataSevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDataSevice.swift; sourceTree = "<group>"; };
 		6691DE1227A3388200B099D2 /* PortfolioContainer.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PortfolioContainer.xcdatamodel; sourceTree = "<group>"; };
 		669AB7D0278A9E6300873C4B /* nftApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nftApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		669AB7D3278A9E6300873C4B /* nftAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nftAppApp.swift; sourceTree = "<group>"; };
@@ -379,7 +377,6 @@
 				66CCF5932792407900F8B2E8 /* CoinImageService.swift */,
 				666C0D9927976EC3001DD2B8 /* MarketDataService.swift */,
 				666C0DA42797964F001DD2B8 /* PortfolioDataService.swift */,
-				6691DE0C27A2624E00B099D2 /* GameDataSevice.swift */,
 				6691DDE9279A1F2B00B099D2 /* CoinDetailDataService.swift */,
 			);
 			path = Services;
@@ -556,7 +553,6 @@
 				66CCF59A2794C4D500F8B2E8 /* SearchBarView.swift in Sources */,
 				6691DDE22798EBA100B099D2 /* DetailView.swift in Sources */,
 				6691DDDD2798DD5400B099D2 /* HapticManager.swift in Sources */,
-				6691DE0D27A2624E00B099D2 /* GameDataSevice.swift in Sources */,
 				66CCF58F2792306C00F8B2E8 /* NetworkingManager.swift in Sources */,
 				666C0D96279758C4001DD2B8 /* HomeStatsView.swift in Sources */,
 				666C0DA0279788CD001DD2B8 /* CoinLogoView.swift in Sources */,

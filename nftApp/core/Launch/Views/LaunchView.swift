@@ -1,14 +1,6 @@
-//
-//  LaunchView.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/21/22.
-//
-
 import SwiftUI
 
 struct LaunchView: View {
-    
     @State var loadingText: [String] = "Loading your portfolio...".map { String($0)}
     @State var showLoadingText: Bool = false
     @State var counter: Int = 0
@@ -33,15 +25,12 @@ struct LaunchView: View {
                                 .foregroundColor(.white)
                                 .fontWeight(.light)
                                 .offset(y: counter == index ? -5 : 0)
-                                
                         }
                     }
                     .transition(AnyTransition.scale.animation(.easeIn))
                 }
-                
             }
             .offset(y: 70)
-            
         }
         .onAppear(perform: {
             showLoadingText.toggle()

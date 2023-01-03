@@ -1,10 +1,3 @@
-//
-//  HomeViewModel.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/13/22.
-//
-
 import Foundation
 import Combine
 import SwiftUI
@@ -22,7 +15,6 @@ class HomeViewModel: ObservableObject {
     // User Statistics model
     @Published var PortfolioStats: [StatisticsModel] = []
     @Published var Portfolio24Change: Double = 0
-    
     
     // Data for creating statistics layouts
     @Published var statistics: [StatisticsModel] = []
@@ -49,7 +41,6 @@ class HomeViewModel: ObservableObject {
         case rank, rankReversed, holdings, holdingsReversed, price, priceReversed
     }
     
-    
    // MARK: Store Manager
     @Published var storeManager: StoreManager = StoreManager()
     
@@ -69,11 +60,6 @@ class HomeViewModel: ObservableObject {
         "design.rdconcepts.crypto.twentyFiveThousand",
         "design.rdconcepts.crypto.oneHundredThousand",
     ]
-    
-//    let portfolioValue =
-//        portfolioCoins
-//            .map({ $0.currentHoldingsValue })
-//            .reduce(0, +)
     
     init() {
         addSubscribers()

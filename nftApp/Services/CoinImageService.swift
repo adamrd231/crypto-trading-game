@@ -1,10 +1,3 @@
-//
-//  CoinImageService.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/14/22.
-//
-
 import Foundation
 import SwiftUI
 import Combine

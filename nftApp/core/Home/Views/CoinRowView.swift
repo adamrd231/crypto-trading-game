@@ -1,10 +1,3 @@
-//
-//  CoinRowView.swift
-//  nftApp
-//
-//  Created by Adam Reed on 1/13/22.
-//
-
 import SwiftUI
 
 struct CoinRowView: View {
