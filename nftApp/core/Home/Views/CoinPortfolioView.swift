@@ -21,6 +21,20 @@ struct CoinStat: View {
     }
 }
 
+struct CoinStatCurrency: View {
+    
+    let title: String
+    let coinStat: Double
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(title)
+                .fontWeight(.bold)
+            Text(coinStat.asCurrencyWith2Decimals())
+        }
+    }
+}
+
 struct ValueChangeStat: View {
     let title: String
     let coinStat: Double
@@ -33,7 +47,7 @@ struct ValueChangeStat: View {
                     .resizable()
                     .frame(width: 20, height: 20, alignment: .leading)
                     .foregroundColor(coinStat > 0 ? .green : .red)
-                Text(coinStat.asCurrencyWith2Decimals())
+                Text(coinStat.description)
             }
         }
     }
@@ -65,8 +79,7 @@ struct CoinView: View {
             
             CoinStat(title: "Owned", coinStat: coin.currentHoldings ?? 0)
             CoinStat(title: "Holdings", coinStat: coin.currentHoldingsValue )
-            CoinStat(title: "Price", coinStat: coin.currentPrice )
-            ValueChangeStat(title: "24 Change", coinStat: coin.priceChange24H ?? 0)
+            CoinStat(title: "24 Change", coinStat: coin.priceChange24H ?? 0)
             CoinStat(title: "Market Rank", coinStat: coin.marketCapRank ?? 0)
         }
         .padding()

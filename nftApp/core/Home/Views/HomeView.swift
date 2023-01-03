@@ -4,9 +4,6 @@
 //
 //  Created by Adam Reed on 1/11/22.
 //
-
-
-
 import SwiftUI
 import GoogleMobileAds
 
@@ -18,6 +15,8 @@ struct HomeView: View {
     @State var showCircleAnimation: Bool = false
     
     @State var showPortfolioView: Bool = false
+    
+    @State var showWelcomeScreen: Bool = false
     
     @State private var selectedTab = "one"
 
@@ -35,11 +34,9 @@ struct HomeView: View {
     private let spacing: CGFloat = 30
     @State var dailyChangeForPortfolio: Double = 0
 
-    
     // MARK: Main Body
     // -------------------
     var body: some View {
-       
         TabView {
             // First Screen
             portfolioStatsView
@@ -49,6 +46,7 @@ struct HomeView: View {
                     Image(systemName: "person.crop.circle")
                     Text(vm.portfolioCoins.count > 0 ? "Portfolio" : "Welcome")
                 }}
+                .padding()
                 .tag("one")
             
             // Information on the game
@@ -118,9 +116,11 @@ struct PortfolioStatDouble: View {
     var body: some View {
         HStack(alignment: .center) {
             Text(title)
+                .font(.title)
                 .fontWeight(.bold)
             Spacer()
             Text(stat.asCurrencyWith2Decimals())
+                .font(.title)
         }
     }
 }
@@ -131,9 +131,11 @@ struct PortfolioStatNumber: View {
     var body: some View {
         HStack(alignment: .center) {
             Text(title)
+                .font(.title)
                 .fontWeight(.bold)
             Spacer()
             Text(String(format: "%.2f", value))
+                .font(.title)
         }
     }
 }
@@ -145,9 +147,11 @@ struct PortfolioStatDate: View {
     var body: some View {
         HStack(alignment: .center) {
             Text(title)
+                .font(.title)
                 .fontWeight(.bold)
             Spacer()
             Text(date.asShortDateString())
+                .font(.title)
         }
     }
 }
@@ -158,10 +162,12 @@ struct PortfolioStatePercentage: View {
     var body: some View {
         HStack(alignment: .center) {
             Text(title)
+                .font(.title)
                 .fontWeight(.bold)
             Spacer()
             Text(value.asPercentString())
                 .foregroundColor(value > 0 ? .green : .red)
+                .font(.title)
         }
     }
 }
@@ -228,33 +234,36 @@ extension HomeView {
     }
    
     private var portfolioStatsView: some View {
-        ScrollView {
-            if vm.portfolioCoins.count > 0 {
-                HStack {
-                    Text("Portfolio")
-                        .font(.title)
+        VStack {
+            // Header
+            HStack {
+                HStack(spacing: 5) {
+                    Text("Crypto Stand")
                         .fontWeight(.bold)
-                    Spacer()
+                    Text("V\(Bundle.main.releaseVersionNumber ?? "V1.0")")
+                        .fontWeight(.bold)
                 }
-               
-                VStack(alignment: .leading) {
-                    PortfolioStatDate(title: "Start Date", date: vm.storeManager.game.startingDate)
-                    PortfolioStatDouble(title: "Money", stat: vm.storeManager.game.gameDollars)
+                Spacer()
+                Button {
+                    showWelcomeScreen = true
+                } label: {
+                    Text("?")
+                        .fontWeight(.heavy)
                 }
-                Divider()
+            }
+            .padding(.vertical)
+            .font(.callout)
+            .foregroundColor(Color.gray)
+            
+            VStack(spacing: 10) {
+                PortfolioStatDouble(title: "Money", stat: vm.storeManager.game.gameDollars)
+                PortfolioStatePercentage(title: "Daily Change", value: vm.Portfolio24Change)
+            }
+            
+            // Coins Portfolio
+            ScrollView {
                 VStack(alignment: .leading) {
-                    PortfolioStatNumber(title: "Unique Coins", value: Double(vm.portfolioCoins.count))
-                    PortfolioStatNumber(title: "Total Coins", value: vm.portfolioCoins.map({ $0.currentHoldings ?? 0 }).reduce(0,+))
-                    PortfolioStatDouble(title: "Total Coin Value", stat: vm.portfolioCoins.map({$0.currentHoldingsValue}).reduce(0, +))
-                }
-                Divider()
-                VStack(alignment: .leading) {
-                    PortfolioStatePercentage(title: "Daily Change", value: vm.Portfolio24Change)
-                }
-                
-                Divider()
-                VStack(alignment: .leading) {
-                    Text("Owned Coins")
+                    Text("Crypto Portfolio")
                         .font(.title)
                         .fontWeight(.bold)
                     
@@ -267,35 +276,13 @@ extension HomeView {
                             content: {
                                 CoinPortfolioView(vm: vm)
                         })
-                    } else {
-                        welcomeScreen
                     }
                 }
-                .onAppear {
-                    vm.portfolioDataService.getPortfolio()
-                }
-                
-            } else {
-                welcomeScreen
             }
         }
-    }
-    
-    private var welcomeScreen: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            Text("Crypto Stand")
-                .font(.largeTitle)
-                .fontWeight(.heavy)
-            ForEach(vm.FAQs, id: \.title) { item in
-                VStack(alignment: .leading) {
-                    Text(item.title)
-                        .font(.title3)
-                        .fontWeight(.bold)
-                    Text(item.body)
-                }
-            }
+        .sheet(isPresented: $showWelcomeScreen) {
+            WelcomeScreen()
         }
-        .frame(width: UIScreen.main.bounds.width * 0.8)
     }
     
     private var cryptoCoinList: some View {
