@@ -28,7 +28,6 @@ class StoreManager: NSObject, ObservableObject, SKProductsRequestDelegate, SKPay
     }
     
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        print("Did receive response")
         
         if !response.products.isEmpty {
             for fetchedProduct in response.products {
@@ -37,7 +36,6 @@ class StoreManager: NSObject, ObservableObject, SKProductsRequestDelegate, SKPay
                         self.myProducts.append(fetchedProduct)
                     } else {
                         self.myConsumableProducts.append(fetchedProduct)
-                        print("price int value: \(fetchedProduct.price.intValue)")
                     }
                 }
             }

@@ -103,8 +103,6 @@ class HomeViewModel: ObservableObject {
         portfolioDataService.$savedTradeEntities
             .map(mapTradesToArray)
             .sink { returnedTrades in
-                print("new trade")
-                print("Trades before: \(self.allTrades.count)")
                 self.allTrades = returnedTrades
                 self.portfolioValue = returnedTrades.map({ $0.cryptoCoinAmount * $0.priceOfCrypto }).reduce(0, +)
                 self.moneySpent = returnedTrades.map({ $0.money }).reduce(0, +)

@@ -28,7 +28,7 @@ struct HomeView: View {
     var body: some View {
         TabView {
             // First Screen
-            portfolioStatsView
+            UserPortfolioOverview()
                 .navigationBarHidden(true)
                 .navigationTitle("")
                 .tabItem { VStack {
@@ -60,7 +60,7 @@ struct HomeView: View {
                     Text("Game")
                 }}
             
-            trades
+            UserTradeActivityView()
                 .navigationTitle("")
                 .navigationBarHidden(true)
                 .tabItem { VStack {
@@ -76,11 +76,7 @@ struct HomeView: View {
                     Image(systemName: "creditcard")
                     Text("In-App")
                 }}
-
         }
-        .sheet(isPresented: $showPortfolioView, content: {
-            PortfolioView(showPortfolio: $showPortfolioView)
-        })
     }
 }
 
@@ -97,176 +93,9 @@ struct HomeView_Previews: PreviewProvider {
     }
 }
 
-
-struct PortfolioStatDouble: View {
-    let title: String
-    let stat: Double
-    
-    var body: some View {
-        HStack(alignment: .center) {
-            Text(title)
-                .font(.title)
-            Spacer()
-            Text(stat.asCurrencyWith2Decimals())
-                .font(.title)
-        }
-    }
-}
-
-struct PortfolioStatNumber: View {
-    let title: String
-    let value: Double
-    var body: some View {
-        HStack(alignment: .center) {
-            Text(title)
-                .font(.title)
-            Spacer()
-            Text(String(format: "%.2f", value))
-                .font(.title)
-        }
-    }
-}
-
-struct PortfolioStatDate: View {
-    let title: String
-    let date: Date
-    
-    var body: some View {
-        HStack(alignment: .center) {
-            Text(title)
-                .font(.title)
-            Spacer()
-            Text(date.asShortDateString())
-                .font(.title)
-        }
-    }
-}
-
-struct PortfolioStatePercentage: View {
-    let title: String
-    let value: Double
-    var body: some View {
-        HStack(alignment: .center) {
-            Text(title)
-                .font(.title)
-            Spacer()
-            Text(value.asPercentString())
-                .foregroundColor(value > 0 ? .green : .red)
-                .font(.title)
-        }
-    }
-}
 // MARK: Extension to HomeView
 // ----------------------------
 extension HomeView {
-    
-    private var trades: some View {
-        VStack {
-            VStack {
-                HStack {
-                    Text("Total Trades")
-                    Spacer()
-                    Text(vm.allTrades.count.description)
-                }
-                HStack {
-                    Text("Money Spent in Trades")
-                    Spacer()
-                    Text(vm.moneySpent.asCurrencyWith2Decimals())
-                }
-                HStack {
-                    Text("Current Portfolio Value")
-                    Spacer()
-                    Text(vm.portfolioValue.asCurrencyWith2Decimals())
-                }
-                HStack {
-                    Text("Growth / Loss")
-                    Spacer()
-                    Text((((vm.portfolioValue - vm.moneySpent) / vm.moneySpent) * 100).asPercentString())
-                }
-            }
-            .onAppear {
-                print("coins in portfolio: \(vm.portfolioCoins.count)")
-            }
-            .padding()
-            
-            List(vm.allTrades) { trade in
-                VStack {
-                    Text("\(trade.coinName)")
-                    HStack {
-                        Text("Coin Purchased at")
-                        Spacer()
-                        Text("\(trade.priceOfCrypto)")
-                    }
-                    .font(.caption2)
-                    HStack {
-                        Text("Coins Purchased")
-                        Spacer()
-                        Text("\(trade.cryptoCoinAmount)")
-                    }
-                    .font(.caption2)
-                    HStack {
-                        Text("Money Spent")
-                        Spacer()
-                        Text("\(trade.money)")
-                    }
-                    .font(.caption2)
-                }
-            }
-        }
-        .onAppear(perform: {
-            vm.portfolioDataService.getTrades()
-        })
-    }
-   
-    private var portfolioStatsView: some View {
-        VStack {
-            // Header
-            VStack {
-                HStack {
-                    HStack(spacing: 5) {
-                        Text("Crypto Stand")
-                            .fontWeight(.bold)
-                        Text("V\(Bundle.main.releaseVersionNumber ?? "V1.0")")
-                            .fontWeight(.bold)
-                    }
-                    Spacer()
-                    Button {
-                        showWelcomeScreen = true
-                    } label: {
-                        Text("?")
-                            .fontWeight(.heavy)
-                    }
-                }
-                .padding(.vertical)
-                .font(.callout)
-                .foregroundColor(Color.gray)
-                
-                VStack(spacing: 10) {
-                    PortfolioStatDouble(title: "Money", stat: vm.storeManager.game.gameDollars)
-                    PortfolioStatePercentage(title: "Daily Change", value: vm.Portfolio24Change)
-                }
-            }
-            .background(Color.theme.blue)
-            
-            
-            // Coins Portfolio
-            ScrollView {
-                if vm.allCoins.count > 0 {
-                    LazyVGrid(
-                        columns: columns,
-                        alignment: .center,
-                        spacing: 10,
-                        pinnedViews: [],
-                        content: {
-                            CoinPortfolioView(vm: vm)
-                    })
-                }
-            }
-        }
-        .sheet(isPresented: $showWelcomeScreen) {
-            WelcomeScreen()
-        }
-    }
     
     private var cryptoCoinList: some View {
         ZStack {
