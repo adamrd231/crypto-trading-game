@@ -8,6 +8,7 @@ class HomeViewModel: ObservableObject {
     // Data Model Variables
     @Published var allCoins: [CoinModel] = []
     @Published var portfolioCoins: [CoinModel] = []
+    @Published var isLoadingPortfolioCoins: Bool = false
     @Published var allTrades: [GameTrade] = []
     @Published var portfolioValue: Double = 0
     @Published var moneySpent: Double = 0
@@ -67,7 +68,7 @@ class HomeViewModel: ObservableObject {
     }
     
     func addSubscribers() {
-        // Updates allCoins
+        // Updates allCoins for seaching
         $searchText
             .combineLatest(coinDataService.$allCoins, $sortOption)
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
@@ -77,7 +78,7 @@ class HomeViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Updates Portfolio Coins
+        // get all coins from the market
         $allCoins
             .combineLatest(portfolioDataService.$savedEntities)
             .map(mapAllCoinsToPortfolioCoins)
@@ -88,7 +89,7 @@ class HomeViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Updates the market data
+        // market data
         marketDataService.$marketData
             .combineLatest($portfolioCoins, storeManager.game.$gameDollars)
             .map(mapGlobalMarketData)
@@ -99,7 +100,7 @@ class HomeViewModel: ObservableObject {
             .store(in: &cancellables)
         
         
-        // Updates game information
+        // Create all trades
         portfolioDataService.$savedTradeEntities
             .map(mapTradesToArray)
             .sink { returnedTrades in
@@ -121,8 +122,6 @@ class HomeViewModel: ObservableObject {
     
     private func mapTradesToArray(trades: [TradeEntity]) -> [GameTrade] {
         var createTrades: [GameTrade] = []
-        print("map trades to array")
-        print("mapping trades count: \(trades.count)")
         for trade in trades {
             var addTrade = GameTrade(type: trade.type ?? "", coinName: trade.cryptoName ?? "", priceOfCrypto: trade.priceOfCrypto, dateOfTrade: trade.dateOfTrade ?? Date(), money: trade.money, cryptoCoinAmount: trade.cryptoCoinAmount)
             createTrades.append(addTrade)

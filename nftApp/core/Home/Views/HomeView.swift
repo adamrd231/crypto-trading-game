@@ -12,16 +12,6 @@ struct HomeView: View {
 
     // Sheet Navigation
     @State private var showDetailView: Bool = false
-    
-    // Grid spacing variable
-    private let columns: [GridItem] = [
-        GridItem(.flexible()),
-        GridItem(.flexible()),
-    ]
-    
-    // Grid spacing variable
-    private let spacing: CGFloat = 30
-    @State var dailyChangeForPortfolio: Double = 0
 
     // MARK: Main Body
     // -------------------
@@ -29,6 +19,7 @@ struct HomeView: View {
         TabView {
             // First Screen
             UserPortfolioOverview()
+                .environmentObject(vm)
                 .navigationBarHidden(true)
                 .navigationTitle("")
                 .tabItem { VStack {
@@ -39,7 +30,7 @@ struct HomeView: View {
                 .tag("one")
             
             // Information on the game
-            cryptoCoinList
+            CoinMarketView().environmentObject(vm)
                 .navigationTitle("")
                 .navigationBarHidden(true)
                 .tabItem { VStack {
@@ -47,9 +38,6 @@ struct HomeView: View {
                     Text("Market")
                 }}
                 .tag("two")
-                .onAppear(perform: {
-                    selectedTab = "two"
-                })
             
             // Game Options Screen
             NewGameScreen()
@@ -77,6 +65,7 @@ struct HomeView: View {
                     Text("In-App")
                 }}
         }
+        .edgesIgnoringSafeArea(.all)
     }
 }
 
@@ -93,110 +82,3 @@ struct HomeView_Previews: PreviewProvider {
     }
 }
 
-// MARK: Extension to HomeView
-// ----------------------------
-extension HomeView {
-    
-    private var cryptoCoinList: some View {
-        ZStack {
-            Color.theme.background
-                .ignoresSafeArea()
-            
-            VStack {
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        withAnimation(.linear(duration: 2.0)) {
-                            vm.reloadData()
-                        }
-                    }, label: {
-                        ZStack {
-                            Rectangle()
-                                .foregroundColor(Color.theme.background)
-                                .frame(width: 100, height: 40, alignment: .bottom)
-                                .padding(.horizontal)
-                            HStack {
-                                Text("Refresh")
-                                Image(systemName: "goforward")
-                                    .foregroundColor(.white)
-                                    .rotationEffect(Angle(degrees: vm.isLoading ? 360 : 0), anchor: .center)
-                            }
-                        }
-                    })
-                }
-               
-                columnTitlesSecondary
-                allCoinsList
-                
-                if vm.storeManager.purchasedRemoveAds != true {
-                    AdMobBanner()
-                }
-            }
-        }
-    }
-
-    
-    private var allCoinsList: some View {
-        List {
-            ForEach(vm.allCoins) { coin in
-                NavigationLink(destination: DetailView(coin: coin, userOwnsCoin: vm.portfolioCoins.contains(coin))) {
-                    if (vm.portfolioCoins.contains(coin)) {
-                        CoinRowView(coin: coin, userOwnsCoin: true)
-                            .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 0))
-                    } else {
-                        CoinRowView(coin: coin, userOwnsCoin: false)
-                            .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 0))
-                    }
-                }
-            }
-        }
-        .listStyle(PlainListStyle())
-    }
-    
-    
-    private var columnTitlesSecondary: some View {
-        HStack(spacing: 40) {
-            HStack(spacing: 4) {
-                Text("Coin")
-                Image(systemName: "chevron.down")
-                    .opacity((vm.sortOption == .rank || vm.sortOption == .rankReversed) ? 1.0 : 0.0)
-                    .rotationEffect(Angle(degrees: vm.sortOption == .rank ? 0 : 180))
-            }
-            .onTapGesture {
-                withAnimation(.default) {
-                    vm.sortOption = vm.sortOption == .rank ? .rankReversed : .rank
-                }
-            }
-            
-            Spacer()
-
-            HStack(spacing: 4) {
-                Text("All Time High / Low")
-                Image(systemName: "chevron.down")
-                    .opacity((vm.sortOption == .holdings || vm.sortOption == .holdingsReversed) ? 1.0 : 0.0)
-                    .rotationEffect(Angle(degrees: vm.sortOption == .holdings ? 0 : 180))
-            }
-            .onTapGesture {
-                withAnimation(.default) {
-                    vm.sortOption = vm.sortOption == .holdings ? .holdingsReversed : .holdings
-                }
-            }
-            
-            HStack(spacing: 4) {
-                Text("Price")
-                Image(systemName: "chevron.down")
-                    .opacity((vm.sortOption == .price || vm.sortOption == .priceReversed) ? 1.0 : 0.0)
-                    .rotationEffect(Angle(degrees: vm.sortOption == .price ? 0 : 180))
-            }
-            .onTapGesture {
-                withAnimation(.default) {
-                    vm.sortOption = vm.sortOption == .price ? .priceReversed : .price
-                }
-            }
-        }
-        .font(.caption)
-        .foregroundColor(Color.theme.secondaryText)
-        .padding(.horizontal)
-        
-    }
-}

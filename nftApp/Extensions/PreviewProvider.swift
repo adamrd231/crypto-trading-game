@@ -22,6 +22,7 @@ class DeveloperPreview {
     private init() {
         homeVM.portfolioCoins.append(coin)
         homeVM.portfolioCoins.append(coin2)
+        homeVM.allCoins.append(coin)
     }
     
     let homeVM = HomeViewModel()
