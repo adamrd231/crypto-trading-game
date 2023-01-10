@@ -28,14 +28,14 @@ class HomeViewModel: ObservableObject {
     @Published var searchText: String = ""
     
     // Options for sorting data
-    @Published var sortOption: SortOption = .holdings
+    @Published var sortOption: SortOption = .priceReversed
     
     // Data Services
     private let coinDataService = CoinDataService()
     private let marketDataService = MarketDataService()
     let portfolioDataService = PortfolioDataService()
 
-    private var cancellables = Set<AnyCancellable>()
+    private var cancellable = Set<AnyCancellable>()
     @State var totalSpentInTrades: Double = 0
     
     enum SortOption {
@@ -76,7 +76,7 @@ class HomeViewModel: ObservableObject {
             .sink { [weak self] (returnedCoins) in
                 self?.allCoins = returnedCoins
             }
-            .store(in: &cancellables)
+            .store(in: &cancellable)
         
         // get all coins from the market
         $allCoins
@@ -87,7 +87,7 @@ class HomeViewModel: ObservableObject {
                 self.portfolioCoins = self.sortPortfolioCoinsIfNeeded(coins: returnedCoins)
                 
             }
-            .store(in: &cancellables)
+            .store(in: &cancellable)
         
         // market data
         marketDataService.$marketData
@@ -97,7 +97,7 @@ class HomeViewModel: ObservableObject {
                 self?.Portfolio24Change = portfolio24Change
                 self?.isLoading = false
             }
-            .store(in: &cancellables)
+            .store(in: &cancellable)
         
         
         // Create all trades
@@ -109,7 +109,7 @@ class HomeViewModel: ObservableObject {
                 self.moneySpent = returnedTrades.map({ $0.money }).reduce(0, +)
                 
             }
-            .store(in: &cancellables)
+            .store(in: &cancellable)
     }
     
     private func mapGlobalMarketData(marketDataModel: MarketDataModel?, portfolioCoins: [CoinModel], gameDollars: Double) -> (Double) {

@@ -40,6 +40,8 @@ struct CoinView: View {
                 CoinStat(title: "Rank", coinStat: coin.marketCapRank ?? 0)
             }
             .padding()
+            Divider()
+
         }
     }
 }

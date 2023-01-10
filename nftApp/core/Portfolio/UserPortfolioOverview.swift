@@ -9,7 +9,9 @@ import SwiftUI
 
 struct UserPortfolioOverview: View {
     @EnvironmentObject var vm: HomeViewModel
+    
     @State var showWelcomeScreen: Bool = false
+    @State var searchText: String = ""
     
     var body: some View {
         ZStack {
@@ -22,10 +24,11 @@ struct UserPortfolioOverview: View {
                     HStack {
                         HStack(spacing: 5) {
                             Text("Crypto Stand")
-                                .fontWeight(.bold)
                             Text("V\(Bundle.main.releaseVersionNumber ?? "V1.0")")
-                                .fontWeight(.bold)
                         }
+                        .font(.caption)
+                        .foregroundColor(Color.theme.secondaryText)
+                        
                         Spacer()
                         Button {
                             showWelcomeScreen = true
@@ -43,16 +46,16 @@ struct UserPortfolioOverview: View {
                         PortfolioStatePercentage(title: "Daily Change", value: vm.Portfolio24Change)
                     }
                 }
-                .padding(30)
+                .padding()
                 .foregroundColor(.white)
                 
+                TitleColumns().environmentObject(vm)
+                    .padding()
                 // Coins Portfolio
                 ScrollView {
                     if vm.portfolioCoins.count > 0 {
-                        ScrollView {
-                            ForEach(vm.portfolioCoins) { coin in
-                                CoinView(coin: coin)
-                            }
+                        ForEach(vm.portfolioCoins) { coin in
+                            CoinView(coin: coin)
                         }
                     } else {
                         Text("Buy Coins in the market")
@@ -72,7 +75,7 @@ struct UserPortfolioOverview: View {
 
 struct UserPortfolioOverview_Previews: PreviewProvider {
     static var previews: some View {
-        UserPortfolioOverview()
+        UserPortfolioOverview(searchText: "Hello")
             .environmentObject(dev.homeVM)
     }
 }
