@@ -35,7 +35,7 @@ struct ChartView: View {
     var body: some View {
         VStack(alignment: .leading) {
             chartView
-                .frame(height: 200)
+                .frame(height: 166)
                 .background(chartBackground)
                 .overlay(chartBackgroundOverlay.padding(.horizontal, 4), alignment: .leading)
             chartDateLabels
@@ -63,7 +63,6 @@ extension ChartView {
         GeometryReader { geo in
             Path { path in
                 for index in data.indices {
-                    
                     let xPosition = geo.size.width / CGFloat(data.count) * CGFloat(index + 1)
                     let yAxis = maxY - minY
                     let yPosition = (1 - CGFloat((data[index] - minY) / yAxis)) * geo.size.height

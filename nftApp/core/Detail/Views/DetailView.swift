@@ -71,8 +71,10 @@ struct DetailView: View {
 
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
-
+        NavigationView {
             DetailView(coin: dev.coin, userOwnsCoin: true)
+        }
+           
         
        
     }

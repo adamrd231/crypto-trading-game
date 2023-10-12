@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct WelcomeScreen: View {
+struct FAQs: View {
     
     @StateObject private var vm = HomeViewModel()
     

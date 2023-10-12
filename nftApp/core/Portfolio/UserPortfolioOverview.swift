@@ -21,25 +21,6 @@ struct UserPortfolioOverview: View {
             VStack {
                 // Header
                 VStack {
-                    HStack {
-                        HStack(spacing: 5) {
-                            Text("Crypto Stand")
-                            Text("V\(Bundle.main.releaseVersionNumber ?? "V1.0")")
-                        }
-                        .font(.caption)
-                        .foregroundColor(Color.theme.secondaryText)
-                        
-                        Spacer()
-                        Button {
-                            showWelcomeScreen = true
-                        } label: {
-                            Text("?")
-                                .fontWeight(.heavy)
-                        }
-                    }
-                    .padding(.vertical)
-                    .font(.callout)
-                    .foregroundColor(Color.gray)
                     
                     VStack(spacing: 10) {
                         PortfolioStatDouble(title: "Money", stat: vm.storeManager.game.gameDollars)
@@ -57,10 +38,6 @@ struct UserPortfolioOverview: View {
                         ForEach(vm.portfolioCoins) { coin in
                             CoinView(coin: coin)
                         }
-                    } else {
-                        Text("Buy Coins in the market")
-                            .fontWeight(.bold)
-                            .padding()
                     }
                 }
                 .frame(width: UIScreen.main.bounds.width)
@@ -68,7 +45,7 @@ struct UserPortfolioOverview: View {
             }
         }
         .sheet(isPresented: $showWelcomeScreen) {
-            WelcomeScreen()
+            FAQs()
         }
     }
 }

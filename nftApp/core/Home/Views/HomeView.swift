@@ -47,14 +47,6 @@ struct HomeView: View {
                     Image(systemName: "gamecontroller")
                     Text("Game")
                 }}
-            
-            UserTradeActivityView()
-                .navigationTitle("")
-                .navigationBarHidden(true)
-                .tabItem { VStack {
-                    Image(systemName: "person")
-                    Text("Trades")
-                }}
    
             // In App Purchases Screen
             InAppStorePurchasesView(storeManager: vm.storeManager).environmentObject(vm)
